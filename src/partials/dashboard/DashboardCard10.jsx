@@ -54,7 +54,7 @@ function DashboardCard10() {
   return (
     <div className="col-span-full xl:col-span-6 bg-white dark:bg-gray-800 shadow-sm rounded-xl">
       <header className="px-5 py-4 border-b border-gray-100 dark:border-gray-700/60">
-        <h2 className="font-semibold text-gray-800 dark:text-gray-100">Customers</h2>
+        <h2 className="font-semibold text-gray-800 dark:text-gray-100">Ultimos movimientos</h2>
       </header>      
       <div className="p-3">
 
@@ -65,13 +65,13 @@ function DashboardCard10() {
             <thead className="text-xs font-semibold uppercase text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-700 dark:bg-opacity-50">
               <tr>
                 <th className="p-2 whitespace-nowrap">
-                  <div className="font-semibold text-left">Name</div>
+                  <div className="font-semibold text-left">Nombre</div>
                 </th>
                 <th className="p-2 whitespace-nowrap">
-                  <div className="font-semibold text-left">Email</div>
+                  <div className="font-semibold text-left">Concepto</div>
                 </th>
                 <th className="p-2 whitespace-nowrap">
-                  <div className="font-semibold text-left">Spent</div>
+                  <div className="font-semibold text-left">Monto</div>
                 </th>
                 <th className="p-2 whitespace-nowrap">
                   <div className="font-semibold text-center">Country</div>
@@ -87,7 +87,8 @@ function DashboardCard10() {
                       <td className="p-2 whitespace-nowrap">
                         <div className="flex items-center">
                           <div className="w-10 h-10 shrink-0 mr-2 sm:mr-3">
-                            <img className="rounded-full" src={customer.image} width="40" height="40" alt={customer.name} />
+                            {/* <img className="rounded-full" src={customer.image} width="40" height="40" alt={customer.name} /> */}
+                            
                           </div>
                           <div className="font-medium text-gray-800 dark:text-gray-100">{customer.name}</div>
                         </div>

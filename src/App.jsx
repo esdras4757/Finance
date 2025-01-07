@@ -5,12 +5,14 @@ import {
   useLocation
 } from 'react-router-dom';
 
+
 import './css/style.css';
 
 import './charts/ChartjsConfig';
 
 // Import pages
 import Dashboard from './pages/Dashboard';
+import Login from './pages/Login';
 
 function App() {
 
@@ -26,6 +28,7 @@ function App() {
     <>
       <Routes>
         <Route exact path="/" element={<Dashboard />} />
+        <Route exact path="/login" element={<Login />} />
       </Routes>
     </>
   );

@@ -30,8 +30,8 @@ function DashboardCard04() {
         data: [
           4900, 2600, 5350, 4800, 5200, 4800,
         ],
-        backgroundColor: tailwindConfig().theme.colors.violet[500],
-        hoverBackgroundColor: tailwindConfig().theme.colors.violet[600],
+        backgroundColor: tailwindConfig().theme.colors.blue[500],
+        hoverBackgroundColor: tailwindConfig().theme.colors.blue[600],
         barPercentage: 0.7,
         categoryPercentage: 0.7,
         borderRadius: 4,

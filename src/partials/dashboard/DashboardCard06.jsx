@@ -15,14 +15,14 @@ function DashboardCard06() {
           35, 30, 35,
         ],
         backgroundColor: [
-          tailwindConfig().theme.colors.violet[500],
+          tailwindConfig().theme.colors.blue[500],
           tailwindConfig().theme.colors.sky[500],
-          tailwindConfig().theme.colors.violet[800],
+          tailwindConfig().theme.colors.blue[800],
         ],
         hoverBackgroundColor: [
-          tailwindConfig().theme.colors.violet[600],
+          tailwindConfig().theme.colors.blue[600],
           tailwindConfig().theme.colors.sky[600],
-          tailwindConfig().theme.colors.violet[900],
+          tailwindConfig().theme.colors.blue[900],
         ],
         borderWidth: 0,
       },

@@ -136,3 +136,19 @@ input[type="search"]::-webkit-search-results-decoration {
   -ms-overflow-style: none;  /* IE and Edge */
   scrollbar-width: none;  /* Firefox */
 }
+
+:where(.css-dev-only-do-not-override-161f05s).ant-modal .ant-modal-content, .ant-modal-title {
+    @apply bg-gray-800 !important;
+    color: white !important;
+    label{
+        color: white !important;
+    }
+}
+
+.anticon-close {
+    color: white !important;
+}
+
+:where(.css-dev-only-do-not-override-161f05s).ant-modal-root .ant-modal-mask {
+    background-color: rgba(0, 0, 0, 0.5) !important;
+}
