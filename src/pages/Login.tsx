@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Button, Checkbox, Form, Input, Flex, message } from "antd";
+import { Button, Checkbox, Form, Input, Flex, message, Spin } from "antd";
 import { FontColorsOutlined, LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
 import styled from "styled-components";
 import axios from "axios";
@@ -15,6 +15,7 @@ const Login = () => {
   const navigate = useNavigate();
   const [currentSection, setCurrentSection] = useState(0);
   const {updateUser} = useUser();
+  const [isLoadingLogin, setIsLoadingLogin] = useState(false);
 
   // sessionStorage.removeItem("token");
 
@@ -22,6 +23,7 @@ const Login = () => {
     console.log("Received values of form: ", values);
 
     try {
+      setIsLoadingLogin(true);
       const response = await axios.post(
         "http://192.168.1.90:5000/api/auth",
         values
@@ -37,6 +39,8 @@ const Login = () => {
       if (error.response.status === 401) {
         setError("Usuario o contraseña incorrectos");
       }
+    } finally {
+      setIsLoadingLogin(false);
     }
   };
 
@@ -170,8 +174,8 @@ const Login = () => {
         className="mb-8"
         style={{ color: "#eee", textAlign: "center" }}
       >
-        <Button block type="primary" htmlType="submit" size="large">
-          Iniciar sesión
+        <Button disabled={isLoadingLogin} block type="primary" htmlType="submit" size="large">
+        {isLoadingLogin? <Spin></Spin> :'Iniciar sesión'}
         </Button>
         <div className="my-2">ó</div>
         <a

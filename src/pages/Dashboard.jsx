@@ -23,6 +23,7 @@ import { useAuth } from "../components/AuthProvider";
 import { useUser } from "../providers/UserProvider";
 import { useForm } from "antd/es/form/Form";
 import axios from "axios";
+import AddCategoryModal from "../components/Modals/AddCategoryModal";
 
 const typesCatalog = [
   {
@@ -155,6 +156,8 @@ function Dashboard() {
     } catch (error) {}
   };
 
+  
+
   const handleIngress = async (values) => {
     delete values.type;
     values.amount = parseFloat(values.amount.replace(/,/g, ""));
@@ -195,15 +198,15 @@ function Dashboard() {
     console.log(formattedValue);
   };
 
-  const AddCategory= async()=>{
+  const AddCategory= async(name)=>{
     try {
-      if (!user || !user.id  || !newCategory) {
+      if (!user || !user.id  || !name) {
         return;
       }
 
       const response = await axios.post( "http://192.168.1.90:5000/api/categories", 
         {
-          name:newCategory,
+          name,
           userId:user.id
         });
       
@@ -411,7 +414,7 @@ function Dashboard() {
         </div>
       </Modal>
 
-      <Modal
+      {/* <Modal
         open={showAddCategoryModal}
         style={{ backgroundColor: "#111827" }}
         title="Agregar categoría"
@@ -428,9 +431,7 @@ function Dashboard() {
         okButtonProps={{ disabled: !newCategory, style:{color:newCategory?'white':"gray"} }}
       >
         <div className="flex flex-col bg-gray-800 gap-4 py-2">
-          {/* Fila 1: Nombre y Teléfono */}
           <div className="flex flex-row gap-4">
-            {/* Nombre */}
             <div className="w-1/2 flex flex-col">
               <label className="text-sm font-semibold text-gray-800 mb-2">
                 Nombre*
@@ -442,7 +443,7 @@ function Dashboard() {
                   height: 32,
                   fontSize: 14,
                 }}
-                value={newCategory}
+                value={newCategory}e
                 placeholder="Nombre"
                 variant="outlined"
                 className="border rounded-md  text-sm"
@@ -453,7 +454,22 @@ function Dashboard() {
 
           </div>
         </div>
-      </Modal>
+      </Modal> */}
+
+      <AddCategoryModal 
+      showAddCategoryModal={showAddCategoryModal} 
+      setShowAddCategoryModal={setShowAddCategoryModal}
+      onOk={(newCategory)=>{
+        console.log(newCategory, 'newCategory')
+        AddCategory(newCategory);
+      }}
+      onCancel={()=>{
+        console.log('onCancel')
+        setCategory(null);
+        setShowAddCategoryModal(false);
+        setNewCategory(null);
+      }}
+      />
 
       <Modal
         open={addModal}

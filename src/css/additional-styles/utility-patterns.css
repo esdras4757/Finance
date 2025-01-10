@@ -217,3 +217,7 @@ input[type="search"]::-webkit-search-results-decoration {
 .ant-select-item-option-selected{
     background-color: #002944 !important;
 }
+
+.ant-modal {
+    padding: 0 !important;
+}
