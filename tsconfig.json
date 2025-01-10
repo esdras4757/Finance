@@ -1,0 +1,16 @@
+{
+    "compilerOptions": {
+      "target": "esnext",
+      "useDefineForClassFields": true,
+      "module": "esnext",
+      "moduleResolution": "node",
+      "strict": true,
+      "jsx": "react-jsx", // Usa "preserve" si es un proyecto de Vue
+      "esModuleInterop": true,
+      "skipLibCheck": true,
+      "forceConsistentCasingInFileNames": true
+    },
+    "include": ["src"],
+    "exclude": ["node_modules"]
+  }
+  

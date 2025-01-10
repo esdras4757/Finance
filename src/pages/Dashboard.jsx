@@ -17,8 +17,12 @@ import DashboardCard10 from "../partials/dashboard/DashboardCard10";
 import DashboardCard11 from "../partials/dashboard/DashboardCard11";
 import DashboardCard12 from "../partials/dashboard/DashboardCard12";
 import DashboardCard13 from "../partials/dashboard/DashboardCard13";
-import { Input, Modal, Select, Tooltip } from "antd";
+import { Button, Form, Input, Modal, Select, Tooltip } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
+import { useAuth } from "../components/AuthProvider";
+import { useUser } from "../providers/UserProvider";
+import { useForm } from "antd/es/form/Form";
+import axios from "axios";
 
 const typesCatalog = [
   {
@@ -116,15 +120,97 @@ function Dashboard() {
   const [addModal, setAddModal] = useState(false);
   const [type, setType] = useState(1);
   const [selectedPerson, setSelectedPerson] = useState(0);
+  const [selectedCategory, setSelectedCategory] = useState(0);
   const [debtType, setDebtType] = useState(0);
   const [showAddPersonModal, setShowAddPersonModal] = useState(false);
+  const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
   const [selectedDebt, setSelectedDebt] = useState(null);
   const [category, setCategory] = useState(null);
+  const [newCategory, setNewCategory] = useState(null);
+  const [amount, setAmount] = useState(null);
+  const { user } = useUser();
+  const [form] = useForm();
   useEffect(() => {
     if (selectedPerson === "new") {
       console.log("Agregar nueva persona");
     }
   }, [selectedPerson]);
+
+  const handleExpenses = async (values) => {
+    delete values.type;
+    values.amount = parseFloat(values.amount.replace(/,/g, ""));
+    try {
+      if (user && user.id) {
+        values.userId = user.id;
+      }
+      const response = await axios.post(
+        "http://192.168.1.90:5000/api/expenses",
+        values
+      );
+      if (response) {
+        console.log("Registro guardado correctamente");
+        setAddModal(false);
+        form.resetFields();
+      }
+    } catch (error) {}
+  };
+
+  const handleIngress = async (values) => {
+    delete values.type;
+    values.amount = parseFloat(values.amount.replace(/,/g, ""));
+    try {
+      if (user && user.id) {
+        values.userId = user.id;
+      }
+      const response = await axios.post(
+        "http://192.168.1.90:5000/api/income",
+        values
+      );
+      if (response) {
+        console.log("Registro guardado correctamente");
+        setAddModal(false);
+        form.resetFields();
+      }
+    } catch (error) {}
+  };
+
+  const handleChange = (e) => {
+    form.setFieldsValue({ amount: e.target.value.replace(/,/g, "") });
+
+    let input = e.target.value;
+    // Remover comas del valor actual
+    const numericValue = input.replace(/,/g, "");
+
+    // Validar que sea un número o un único punto decimal
+    if (!/^\d*\.?\d*$/.test(numericValue)) return;
+
+    // Formatear el valor con comas para miles
+    const parts = numericValue.split(".");
+    parts[0] = Number(parts[0]).toLocaleString("en-US"); // Formatear la parte entera
+
+    const formattedValue =
+      parts.length > 1 ? `${parts[0]}.${parts[1]}` : parts[0];
+    setAmount(formattedValue);
+
+    console.log(formattedValue);
+  };
+
+  const AddCategory= async()=>{
+    try {
+      if (!user || !user.id  || !newCategory) {
+        return;
+      }
+
+      const response = await axios.post( "http://192.168.1.90:5000/api/categories", 
+        {
+          name:newCategory,
+          userId:user.id
+        });
+      
+    } catch (error) {
+      
+    }
+  }
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -134,54 +220,51 @@ function Dashboard() {
       {/* Content area */}
       <div className="relative flex flex-col flex-1 overflow-y-auto overflow-x-hidden">
         {/*  Site header */}
-        <Header sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+        <Header
+          sidebarOpen={sidebarOpen}
+          setSidebarOpen={setSidebarOpen}
+          user={user}
+        />
 
         <main className="grow">
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
             {/* Dashboard actions */}
             <div className="sm:flex sm:justify-between sm:items-center mb-8">
               {/* Left: Title */}
-              <div className="mb-4 sm:mb-0">
-                <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold">
+              <div className="mb-4 sm:mb-0 flex justify-between align-middle items-center flex-wrap ">
+                <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold md:mr-4">
                   Dashboard
                 </h1>
+
+                <button
+                  onClick={() => setAddModal(true)}
+                  className="btn bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-800 dark:hover:bg-white md:mr-4"
+                >
+                  <span className="">+ Agregar</span>
+                </button>
+
+                <button
+                  onClick={() => setAddModal(true)}
+                  className="btn bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-800 dark:hover:bg-white"
+                >
+                  {/* <svg
+                    className="fill-current shrink-0 xs:hidden"
+                    width="16"
+                    height="16"
+                    viewBox="0 0 16 16"
+                  >
+                    <path d="M15 7H9V1c0-.6-.4-1-1-1S7 .4 7 1v6H1c-.6 0-1 .4-1 1s.4 1 1 1h6v6c0 .6.4 1 1 1s1-.4 1-1V9h6c.6 0 1-.4 1-1s-.4-1-1-1z" />
+                  </svg> */}
+                  <span className="">Administrar deuda</span>
+                </button>
               </div>
 
               {/* Right: Actions */}
-              <div className="grid grid-flow-col sm:auto-cols-max justify-start sm:justify-end gap-2">
+              <div className="grid grid-flow-col sm:auto-cols-max  sm:justify-end gap-2">
                 {/* Filter button */}
                 <FilterButton align="right" />
                 {/* Datepicker built with React Day Picker */}
                 <Datepicker align="right" />
-                {/* Add view button */}
-                <button
-                  onClick={() => setAddModal(true)}
-                  className="btn bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-800 dark:hover:bg-white"
-                >
-                  <svg
-                    className="fill-current shrink-0 xs:hidden"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M15 7H9V1c0-.6-.4-1-1-1S7 .4 7 1v6H1c-.6 0-1 .4-1 1s.4 1 1 1h6v6c0 .6.4 1 1 1s1-.4 1-1V9h6c.6 0 1-.4 1-1s-.4-1-1-1z" />
-                  </svg>
-                  <span className="max-xs:sr-only">+ Agregar</span>
-                </button>
-                <button
-                  onClick={() => setAddModal(true)}
-                  className="btn bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-800 dark:hover:bg-white"
-                >
-                  <svg
-                    className="fill-current shrink-0 xs:hidden"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M15 7H9V1c0-.6-.4-1-1-1S7 .4 7 1v6H1c-.6 0-1 .4-1 1s.4 1 1 1h6v6c0 .6.4 1 1 1s1-.4 1-1V9h6c.6 0 1-.4 1-1s-.4-1-1-1z" />
-                  </svg>
-                  <span className="max-xs:sr-only">Administrar deuda</span>
-                </button>
               </div>
             </div>
 
@@ -221,10 +304,15 @@ function Dashboard() {
 
       <Modal
         open={showAddPersonModal}
-        style={{backgroundColor: '#111827'}}
+        style={{ backgroundColor: "#111827" }}
         title="Agregar contacto"
         destroyOnClose
-        onCancel={() => setShowAddPersonModal(false)}
+        onCancel={() => {
+          setShowAddPersonModal(false);
+          setSelectedPerson(null);
+          form.resetFields();
+          setAmount(null);
+        }}
       >
         <div className="flex flex-col bg-gray-800 gap-4 py-2">
           {/* Fila 1: Nombre y Teléfono */}
@@ -287,61 +375,124 @@ function Dashboard() {
       </Modal>
 
       <Modal
+        open={showAddCategoryModal}
+        style={{ backgroundColor: "#111827" }}
+        title="Agregar categoría"
+        destroyOnClose
+        onCancel={() => {
+          setShowAddCategoryModal(false);
+          setSelectedPerson(null);
+          form.resetFields();
+          setAmount(null);
+        }}
+        onOk={() => {
+          AddCategory();
+        }}
+        okButtonProps={{ disabled: !newCategory, style:{color:newCategory?'white':"gray"} }}
+      >
+        <div className="flex flex-col bg-gray-800 gap-4 py-2">
+          {/* Fila 1: Nombre y Teléfono */}
+          <div className="flex flex-row gap-4">
+            {/* Nombre */}
+            <div className="w-1/2 flex flex-col">
+              <label className="text-sm font-semibold text-gray-800 mb-2">
+                Nombre*
+              </label>
+              <Input
+                style={{
+                  borderRadius: 5,
+                  borderColor: "#ccc",
+                  height: 32,
+                  fontSize: 14,
+                }}
+                value={newCategory}
+                placeholder="Nombre"
+                variant="outlined"
+                className="border rounded-md  text-sm"
+                onChange={(e) => setNewCategory(e.target.value)}
+              />
+            </div>
+          </div>
+        </div>
+      </Modal>
+
+      <Modal
         open={addModal}
         title="Agregar registro"
         destroyOnClose
+        footer={null}
         onCancel={() => {
-          setAddModal(false)
-          setType(1)
-          setCategory(null)
-        }  
-        }
+          setAddModal(false);
+          setType(1);
+          setCategory(null);
+          setAmount(null);
+          form.resetFields();
+        }}
         centered
       >
-        <div className="flex flex-col py-4">
-          {/* Selección de Tipo de Registro */}
-          <div className="mb-4 w-full flex flex-col">
-            <label className="text-sm font-semibold text-gray-800 mb-2">
-              Tipo de Registro*
-            </label>
+        <Form
+          form={form}
+          onFinish={(e) => {
+            if (e.type === 1) {
+              handleExpenses(e);
+            } else if (e.type === 2) {
+              handleIngress(e);
+            }
+          }}
+          layout="vertical"
+          className="py-4"
+        >
+          {/* Tipo de Registro */}
+          <Form.Item
+            label="Tipo de Registro*"
+            name="type"
+            initialValue={1}
+            rules={[
+              { required: true, message: "Selecciona un tipo de registro" },
+            ]}
+          >
             <Select
               placeholder="Selecciona un tipo de registro"
               onChange={(value) => setType(value)}
-              defaultValue={1}
             >
               <Select.Option value={1}>Ingreso</Select.Option>
               <Select.Option value={2}>Egreso</Select.Option>
               <Select.Option value={3}>Deuda</Select.Option>
             </Select>
-          </div>
+          </Form.Item>
 
-          {/* Campos comunes: Monto */}
-          <div className="mb-4 w-full flex flex-col">
-            <label className="text-sm font-semibold text-gray-800 mb-2">
-              Monto*
-            </label>
+          {/* Monto */}
+          <Form.Item
+            label="Monto*"
+            name="amount"
+            initialValue={amount}
+            rules={[{ required: true, message: "Ingresa el monto" }]}
+          >
             <Input
               placeholder="Monto"
-              type="number"
-              variant="outlined"
+              type="text"
+              value={amount}
+              onChange={handleChange}
               style={{
-                borderRadius: 5,
-                borderColor: "#ccc",
-                width: 150,
-                height: 32,
-                fontSize: 14,
+                width: "100px",
+                fontSize: "14px",
               }}
             />
-          </div>
+            <span className="text-white">$</span>
+          </Form.Item>
 
           {/* Campos adicionales para Deudas */}
           {type === 3 && (
             <>
               {/* Tipo de Deuda */}
-              <div className="mb-4 w-full flex flex-col">
-                <label className="text-sm font-semibold text-gray-800 mb-2">
-                  Tipo de Deuda*
-                </label>
+              <Form.Item
+                label="Tipo de Deuda*"
+                name="debtType"
+                initialValue={debtType}
+                rules={[
+                  { required: true, message: "Selecciona el tipo de deuda" },
+                ]}
+              >
                 <Select
                   placeholder="Selecciona el tipo de deuda"
                   onChange={(value) => setDebtType(value)}
@@ -349,19 +500,20 @@ function Dashboard() {
                   <Select.Option value="por_pagar">Por Pagar</Select.Option>
                   <Select.Option value="por_cobrar">Por Cobrar</Select.Option>
                 </Select>
-              </div>
+              </Form.Item>
 
-              {/* Selección de Persona */}
-              <div className="mb-4 w-full flex flex-col">
-                <label className="text-sm font-semibold text-gray-800 mb-2">
-                  Persona*
-                </label>
+              {/* Persona */}
+              <Form.Item
+                label="Persona*"
+                name="selectedPerson"
+                rules={[{ required: true, message: "Selecciona una persona" }]}
+              >
                 <Select
                   showSearch
                   placeholder="Selecciona una persona o agrega nueva"
                   value={selectedPerson}
                   onChange={(value) => {
-                    if (value === "new") {
+                    if (value === "nuevo") {
                       setShowAddPersonModal(true);
                       return;
                     }
@@ -373,49 +525,32 @@ function Dashboard() {
                       {person.name}
                     </Select.Option>
                   ))}
-                  <Select.Option value="new"><div style={{background:'#2669bb', color:'white', padding: 5, borderRadius:10, textAlign:'center'}}>Agregar nuevo contacto </div></Select.Option>
+                  <Select.Option value="new">
+                    <div
+                      style={{
+                        background: "#2669bb",
+                        color: "white",
+                        padding: 5,
+                        borderRadius: 10,
+                        textAlign: "center",
+                      }}
+                    >
+                      Agregar nuevo contacto
+                    </div>
+                  </Select.Option>
                 </Select>
-              </div>
-
-              {/* Selección de Deuda Existente o Nueva
-              {debtType === "por_pagar" && (
-                <div className="mb-4 w-full flex flex-col">
-                  <label className="text-sm font-semibold text-gray-800 mb-2">
-                    Deuda Existente
-                    <Tooltip 
-                    className="ml-2"
-                    title="Selecciona una deuda existente para registrar un pago o registra una nueva deuda">
-                      <InfoCircleOutlined />
-                    </Tooltip>
-                  </label>
-                  <Select
-                    placeholder="Selecciona una deuda existente o registra nueva"
-                    value={selectedDebt}
-                    onChange={(value) => setSelectedDebt(value)}
-                  >
-                    {debtCatalog.map((debt) => (
-                      <Select.Option key={debt.id} value={debt.id}>
-                        {debt.concept} - ${debt.amountRemaining}
-                      </Select.Option>
-                    ))}
-                    <Select.Option value="new">Nueva Deuda</Select.Option>
-                  </Select>
-                </div>
-              )} */}
+              </Form.Item>
             </>
           )}
 
           {/* Categoría */}
-          {<div className="mb-4 w-full flex flex-col">
-            <label className="text-sm font-semibold text-gray-800 mb-2">
-              Categoría (Opcional)
-            </label>
+          <Form.Item label="Categoría (Opcional)" name="category">
             <Select
               placeholder="Selecciona una categoría"
               value={category}
               onChange={(value) => {
-                if (value === "new") {
-                  setShowAddPersonModal(true);
+                if (value === "nuevo") {
+                  setShowAddCategoryModal(true);
                   return;
                 }
                 setCategory(value);
@@ -426,22 +561,56 @@ function Dashboard() {
                   {label.name}
                 </Select.Option>
               ))}
-              <Select.Option value="new"><div style={{background:'#2669bb', color:'white', padding: 5, borderRadius:10, textAlign:'center'}}>Agregar categoria </div></Select.Option>
+              {!showAddCategoryModal && (
+                <Select.Option value="nuevo">
+                  <div
+                    style={{
+                      background: "#2669bb",
+                      color: "white",
+                      padding: 5,
+                      borderRadius: 10,
+                      textAlign: "center",
+                    }}
+                  >
+                    Agregar categoría
+                  </div>
+                </Select.Option>
+              )}
             </Select>
-          </div>}
+          </Form.Item>
 
           {/* Concepto */}
-          <div className="mb-4 w-full flex flex-col">
-            <label className="text-sm font-semibold text-gray-800 mb-2">
-              Concepto (Opcional)
-            </label>
+          <Form.Item label="Concepto (Opcional)" name="concept">
             <Input.TextArea
               placeholder="Concepto"
-              variant="outlined"
-              style={{ borderRadius: 5, borderColor: "#ccc", fontSize: 14 }}
+              rows={1}
+              style={{
+                borderRadius: 5,
+                borderColor: "#ccc",
+                fontSize: 14,
+                minHeight: 39,
+              }}
             />
-          </div>
-        </div>
+          </Form.Item>
+
+          {/* Botón de enviar */}
+          <Form.Item className="flex buttonsFooter justify-end">
+            <Button
+              type="default"
+              className="mr-4 mb-0"
+              onClick={() => {
+                setAddModal(false);
+                form.resetFields();
+                setAmount(null);
+              }}
+            >
+              Cancelar
+            </Button>
+            <Button type="primary" htmlType="submit">
+              Guardar
+            </Button>
+          </Form.Item>
+        </Form>
       </Modal>
     </div>
   );

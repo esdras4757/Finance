@@ -137,7 +137,7 @@ input[type="search"]::-webkit-search-results-decoration {
   scrollbar-width: none;  /* Firefox */
 }
 
-:where(.css-dev-only-do-not-override-161f05s).ant-modal .ant-modal-content, .ant-modal-title {
+.ant-modal .ant-modal-content, .ant-modal-title {
     @apply bg-gray-800 !important;
     color: white !important;
     label{
@@ -149,6 +149,54 @@ input[type="search"]::-webkit-search-results-decoration {
     color: white !important;
 }
 
-:where(.css-dev-only-do-not-override-161f05s).ant-modal-root .ant-modal-mask {
+.ant-modal-root .ant-modal-mask {
     background-color: rgba(0, 0, 0, 0.5) !important;
+}
+
+.ant-input-prefix{
+    color: white !important;
+}
+
+.ant-input-outlined{
+    background-color: transparent !important;
+    color: white !important;
+    border-radius: 0px !important;
+    border-top: 0 !important;
+    border-left: 0 !important;
+    border-right: 0 !important;
+    padding: 8px 5px;
+}
+
+.ant-input, .ant-input::placeholder{
+    color: white !important;
+}
+
+*{
+    font-family: 'Roboto' ,'Inter', sans-serif !important;
+}
+
+.ant-select-outlined:not(.ant-select-customize-input) .ant-select-selector{
+    background-color: transparent !important;
+    color: white !important;
+    border-radius: 0px !important;
+    border-top: 0 !important;
+    border-left: 0 !important;
+    border-right: 0 !important;
+    padding: 8px 5px;
+}
+
+.ant-select-single .ant-select-selector .ant-select-selection-item{
+    color: white !important;
+}
+
+.ant-select-selection-search-input::placeholder, .ant-select-selection-placeholder{
+    color: rgba(255, 255, 255, 0.678) !important;
+}
+
+.ant-input::placeholder{
+    color: rgba(255, 255, 255, 0.678) !important;
+}
+
+.buttonsFooter{
+    margin-bottom: 0;
 }
