@@ -151,7 +151,7 @@ function Dashboard() {
       if (response) {
         console.log("Registro guardado correctamente");
         setAddModal(false);
-        form.resetFields();
+        form.setFields([{ name: "category", value: null }]);
       }
     } catch (error) {}
   };
@@ -229,6 +229,12 @@ function Dashboard() {
       );
     } catch (error) {}
   };
+
+
+  useEffect(() => {
+    console.log(category, 'category')
+  }, [category])
+  
 
 
   return (
@@ -467,6 +473,7 @@ function Dashboard() {
         console.log('onCancel')
         setCategory(null);
         setShowAddCategoryModal(false);
+        form.setFieldValue('category', null);
         setNewCategory(null);
       }}
       />
@@ -562,6 +569,7 @@ function Dashboard() {
               <Form.Item
                 label="Persona*"
                 name="selectedPerson"
+                initialValue={selectedPerson}
                 rules={[{ required: true, message: "Selecciona una persona" }]}
               >
                 <Select
@@ -571,7 +579,6 @@ function Dashboard() {
                   onChange={(value) => {
                     if (value === "nuevo") {
                       setShowAddPersonModal(true);
-                      return;
                     }
                     setSelectedPerson(value);
                   }}
@@ -600,14 +607,16 @@ function Dashboard() {
           )}
 
           {/* Categoría */}
-          <Form.Item label="Categoría (Opcional)" name="category">
+          <Form.Item 
+          label="Categoría (Opcional)" 
+          initialValue={category}
+          name="category">
             <Select
               placeholder="Selecciona una categoría"
               value={category}
               onChange={(value) => {
                 if (value === "nuevo") {
                   setShowAddCategoryModal(true);
-                  return;
                 }
                 setCategory(value);
               }}
