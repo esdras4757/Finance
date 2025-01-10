@@ -145,7 +145,7 @@ function Dashboard() {
         values.userId = user.id;
       }
       const response = await axios.post(
-        "http://192.168.1.90:5000/api/expenses",
+        "http://192.168.1.90:5001/api/expenses",
         values
       );
       if (response) {
@@ -166,7 +166,7 @@ function Dashboard() {
         values.userId = user.id;
       }
       const response = await axios.post(
-        "http://192.168.1.90:5000/api/income",
+        "http://192.168.1.90:5001/api/income",
         values
       );
       if (response) {
@@ -204,7 +204,7 @@ function Dashboard() {
         return;
       }
 
-      const response = await axios.post( "http://192.168.1.90:5000/api/categories", 
+      const response = await axios.post( "http://192.168.1.90:5001/api/categories", 
         {
           name,
           userId:user.id
@@ -221,7 +221,7 @@ function Dashboard() {
         return;
       }
 
-      const response = await axios.post("http://192.168.1.90:5000/api/contacts",
+      const response = await axios.post("http://192.168.1.90:5001/api/contacts",
         {
           name: newCategory,
           userId: user.id,

@@ -1,10 +1,11 @@
+/// <reference types="vite/client" />
 import React, { useEffect, useState } from "react";
 import { Button, Checkbox, Form, Input, Flex, message, Spin } from "antd";
 import { FontColorsOutlined, LockOutlined, MailOutlined, UserOutlined } from "@ant-design/icons";
 import styled from "styled-components";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { AnimatePresence, motion } from "motion/react";
+import { AnimatePresence, motion, progress } from "motion/react";
 import { useAuth } from "../components/AuthProvider";
 import { useUser } from '../providers/UserProvider';
 
@@ -17,15 +18,14 @@ const Login = () => {
   const {updateUser} = useUser();
   const [isLoadingLogin, setIsLoadingLogin] = useState(false);
 
+  console.log(import.meta.env.VITE_URL_BASE);
   // sessionStorage.removeItem("token");
 
   const loginFetch = async (values: any) => {
     console.log("Received values of form: ", values);
 
     try {
-      setIsLoadingLogin(true);
-      const response = await axios.post(
-        "http://192.168.1.90:5000/api/auth",
+      const response = await axios.post(`${import.meta.env.VITE_URL_BASE}/api/auth`,
         values
       );
       const { data } = response;
@@ -48,7 +48,7 @@ const Login = () => {
     console.log("Received values of form: ", values);
     
     try {
-      const response = await axios.post("http://192.168.1.90:5000/api/users", values);
+      const response = await axios.post("http://192.168.1.90:5001/api/users", values);
       const { data } = response;
       sessionStorage.setItem("token", JSON.stringify(data.user));
       if (response) {
