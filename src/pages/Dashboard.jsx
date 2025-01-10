@@ -121,7 +121,7 @@ function Dashboard() {
   const [type, setType] = useState(1);
   const [selectedPerson, setSelectedPerson] = useState(0);
   const [selectedCategory, setSelectedCategory] = useState(0);
-  const [debtType, setDebtType] = useState(0);
+  const [debtType, setDebtType] = useState(null);
   const [showAddPersonModal, setShowAddPersonModal] = useState(false);
   const [showAddCategoryModal, setShowAddCategoryModal] = useState(false);
   const [selectedDebt, setSelectedDebt] = useState(null);
@@ -211,6 +211,22 @@ function Dashboard() {
       
     }
   }
+
+  const AddContact = async () => {
+    try {
+      if (!user || !user.id ) {
+        return;
+      }
+
+      const response = await axios.post("http://192.168.1.90:5000/api/contacts",
+        {
+          name: newCategory,
+          userId: user.id,
+        }
+      );
+    } catch (error) {}
+  };
+
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -313,6 +329,9 @@ function Dashboard() {
           form.resetFields();
           setAmount(null);
         }}
+        onOk={() => {
+          AddContact()
+        }}
       >
         <div className="flex flex-col bg-gray-800 gap-4 py-2">
           {/* Fila 1: Nombre y Teléfono */}
@@ -334,10 +353,9 @@ function Dashboard() {
                 className="border rounded-md  text-sm"
               />
             </div>
-            {/* Teléfono */}
             <div className="w-1/2 flex flex-col">
               <label className="text-sm font-semibold text-gray-800 mb-2">
-                Teléfono (Opcional)
+                Apellido*
               </label>
               <Input
                 style={{
@@ -346,15 +364,17 @@ function Dashboard() {
                   height: 32,
                   fontSize: 14,
                 }}
-                placeholder="Teléfono"
+                placeholder="Apellido"
                 variant="outlined"
                 className="border rounded-md  text-sm"
               />
             </div>
+            
           </div>
 
           {/* Fila 2: Correo */}
-          <div className="flex flex-col">
+          <div className="flex flex-row gap-4 mt-4 mb-2">
+          <div className="flex flex-col w-1/2">
             <label className="text-sm font-semibold text-gray-800 mb-2">
               Correo (Opcional)
             </label>
@@ -371,6 +391,23 @@ function Dashboard() {
               className="border rounded-md text-sm"
             />
           </div>
+          <div className="w-1/2 flex flex-col">
+              <label className="text-sm font-semibold text-gray-800 mb-2">
+                Teléfono (Opcional)
+              </label>
+              <Input
+                style={{
+                  borderRadius: 5,
+                  borderColor: "#ccc",
+                  height: 32,
+                  fontSize: 14,
+                }}
+                placeholder="Teléfono"
+                variant="outlined"
+                className="border rounded-md  text-sm"
+              />
+            </div>
+            </div>
         </div>
       </Modal>
 
@@ -412,6 +449,8 @@ function Dashboard() {
                 onChange={(e) => setNewCategory(e.target.value)}
               />
             </div>
+
+
           </div>
         </div>
       </Modal>
@@ -494,6 +533,7 @@ function Dashboard() {
                 ]}
               >
                 <Select
+                value={debtType}
                   placeholder="Selecciona el tipo de deuda"
                   onChange={(value) => setDebtType(value)}
                 >
@@ -525,7 +565,7 @@ function Dashboard() {
                       {person.name}
                     </Select.Option>
                   ))}
-                  <Select.Option value="new">
+                  <Select.Option value="nuevo">
                     <div
                       style={{
                         background: "#2669bb",

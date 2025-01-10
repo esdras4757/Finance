@@ -200,3 +200,20 @@ input[type="search"]::-webkit-search-results-decoration {
 .buttonsFooter{
     margin-bottom: 0;
 }
+
+.ant-select-dropdown-placement-bottomLeft{
+    background-color: #003457 !important;
+    color: white !important;
+}
+
+.ant-select-item .ant-select-item-option, .ant-select-item-option-content{
+    color: white !important;
+}
+
+.ant-select-item-option:hover{
+    background-color: #002944 !important;
+}
+
+.ant-select-item-option-selected{
+    background-color: #002944 !important;
+}
