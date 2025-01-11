@@ -24,7 +24,7 @@ import { useUser } from "../providers/UserProvider";
 import { useForm } from "antd/es/form/Form";
 import axios from "axios";
 import AddCategoryModal from "../components/Modals/AddCategoryModal";
-
+import AddContactModal from "../components/Modals/AddContactModal";
 const typesCatalog = [
   {
     name: "Ingreso",
@@ -120,7 +120,7 @@ function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [addModal, setAddModal] = useState(false);
   const [type, setType] = useState(1);
-  const [selectedPerson, setSelectedPerson] = useState(0);
+  const [selectedPerson, setSelectedPerson] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(0);
   const [debtType, setDebtType] = useState(null);
   const [showAddPersonModal, setShowAddPersonModal] = useState(false);
@@ -128,14 +128,29 @@ function Dashboard() {
   const [selectedDebt, setSelectedDebt] = useState(null);
   const [category, setCategory] = useState(null);
   const [newCategory, setNewCategory] = useState(null);
+  const [categoryCatalog, setCategoryCatalog] = useState([]);
+  const [contactsCatalog, setContactsCatalog] = useState([]);
   const [amount, setAmount] = useState(null);
   const { user } = useUser();
   const [form] = useForm();
+
   useEffect(() => {
     if (selectedPerson === "new") {
       console.log("Agregar nueva persona");
     }
   }, [selectedPerson]);
+
+  useEffect(() => {
+    if (addModal === true) {
+      setAmount(null);
+      setType(1);
+      setCategory(null);
+      setSelectedPerson(null);
+      form.resetFields();
+      form.setFields [{ name: "category", value: null }, { name: "selectedPerson", value: null }];
+      form.setFields;
+    }
+  }, [addModal]);
 
   const handleExpenses = async (values) => {
     delete values.type;
@@ -156,8 +171,6 @@ function Dashboard() {
     } catch (error) {}
   };
 
-  
-
   const handleIngress = async (values) => {
     delete values.type;
     values.amount = parseFloat(values.amount.replace(/,/g, ""));
@@ -167,6 +180,38 @@ function Dashboard() {
       }
       const response = await axios.post(
         "http://192.168.1.90:5001/api/income",
+        values
+      );
+      if (response) {
+        console.log("Registro guardado correctamente");
+        setAddModal(false);
+        form.resetFields();
+      }
+    } catch (error) {}
+  };
+
+  const handleDebt = async (values) => {
+    if (values.category) {
+      values.categoryId = categoryCatalog.find(
+        (category) => category.name === values.category
+      ).categoryId;
+    }
+    values.contactId = contactsCatalog.find(
+      (contact) => contact.name === values.selectedPerson
+    ).contactId;
+    delete values.type;
+    values.type = values.debtType
+    delete values.selectedPerson;
+    delete values.category;
+    delete values.debtType;
+    values.amount = parseFloat(values.amount.replace(/,/g, ""));
+    try {
+      console.log(values);
+      if (user && user.id) {
+        values.userId = user.id;
+      }
+      const response = await axios.post(
+        "http://192.168.1.90:5001/api/debts",
         values
       );
       if (response) {
@@ -198,44 +243,97 @@ function Dashboard() {
     console.log(formattedValue);
   };
 
-  const AddCategory= async(name)=>{
+  const AddCategory = async (name) => {
     try {
-      if (!user || !user.id  || !name) {
+      if (!user || !user.id || !name) {
         return;
       }
 
-      const response = await axios.post( "http://192.168.1.90:5001/api/categories", 
+      const response = await axios.post(
+        "http://192.168.1.90:5001/api/categories",
         {
           name,
-          userId:user.id
-        });
-      
-    } catch (error) {
-      
-    }
-  }
-
-  const AddContact = async () => {
-    try {
-      if (!user || !user.id ) {
-        return;
-      }
-
-      const response = await axios.post("http://192.168.1.90:5001/api/contacts",
-        {
-          name: newCategory,
           userId: user.id,
         }
       );
-    } catch (error) {}
+
+      if (response) {
+        setCategory(name);
+        setShowAddCategoryModal(false);
+        form.setFields([{ name: "category", value: name }]);
+        setCategoryCatalog([
+          ...categoryCatalog,
+          { name, categoryId: response.data.categoryId },
+        ]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
+  const AddContact = async (Contact) => {
+    try {
+      if (!user || !user.id || !Contact) {
+        return;
+      }
+      const response = await axios.post(
+        "http://192.168.1.90:5001/api/contacts",
+        { ...Contact, userId: user.id }
+      );
+      if (response) {
+        setSelectedPerson(Contact.name);
+        setShowAddPersonModal(false);
+        form.setFields([{ name: "selectedPerson", value: Contact.name }]);
+        setContactsCatalog([
+          ...contactsCatalog,
+          { name: Contact.name, id: response.data.contactId },
+        ]);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const GetCategoriesCatalog = async () => {
+    try {
+      if (!user || !user.id) {
+        return;
+      }
+      const response = await axios.get(
+        `${import.meta.env.VITE_URL_BASE}/api/categories/byUserId/${user.id}`
+      );
+      if (response) {
+        console.log(response.data);
+        setCategoryCatalog(response.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const GetContactsCatalog = async () => {
+    try {
+      if (!user || !user.id) {
+        return;
+      }
+      const response = await axios.get(
+        `${import.meta.env.VITE_URL_BASE}/api/contacts/byUserId/${user.id}`
+      );
+      if (response) {
+        console.log(response.data);
+        setContactsCatalog(response.data);
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   useEffect(() => {
-    console.log(category, 'category')
-  }, [category])
-  
-
+    if (addModal) {
+      GetCategoriesCatalog();
+      GetContactsCatalog();
+    }
+  }, [addModal]);
 
   return (
     <div className="flex h-screen overflow-hidden">
@@ -327,155 +425,36 @@ function Dashboard() {
         </main>
       </div>
 
-      <Modal
-        open={showAddPersonModal}
-        style={{ backgroundColor: "#111827" }}
-        title="Agregar contacto"
-        destroyOnClose
+      <AddContactModal
+        showAddContactModal={showAddPersonModal}
+        setShowAddContactModal={setShowAddPersonModal}
+        onOk={(contact) => {
+          console.log(contact, "contact");
+          AddContact(contact);
+        }}
         onCancel={() => {
+          console.log("onCancel");
+          setSelectedPerson(null);
           setShowAddPersonModal(false);
-          setSelectedPerson(null);
-          form.resetFields();
-          setAmount(null);
+          form.setFieldValue("selectedPerson", null);
+          setNewCategory(null);
         }}
-        onOk={() => {
-          AddContact()
+      />
+
+      <AddCategoryModal
+        showAddCategoryModal={showAddCategoryModal}
+        setShowAddCategoryModal={setShowAddCategoryModal}
+        onOk={(newCategory) => {
+          console.log(newCategory, "newCategory");
+          AddCategory(newCategory);
         }}
-      >
-        <div className="flex flex-col bg-gray-800 gap-4 py-2">
-          {/* Fila 1: Nombre y Teléfono */}
-          <div className="flex flex-row gap-4">
-            {/* Nombre */}
-            <div className="w-1/2 flex flex-col">
-              <label className="text-sm font-semibold text-gray-800 mb-2">
-                Nombre*
-              </label>
-              <Input
-                style={{
-                  borderRadius: 5,
-                  borderColor: "#ccc",
-                  height: 32,
-                  fontSize: 14,
-                }}
-                placeholder="Nombre"
-                variant="outlined"
-                className="border rounded-md  text-sm"
-              />
-            </div>
-            <div className="w-1/2 flex flex-col">
-              <label className="text-sm font-semibold text-gray-800 mb-2">
-                Apellido*
-              </label>
-              <Input
-                style={{
-                  borderRadius: 5,
-                  borderColor: "#ccc",
-                  height: 32,
-                  fontSize: 14,
-                }}
-                placeholder="Apellido"
-                variant="outlined"
-                className="border rounded-md  text-sm"
-              />
-            </div>
-            
-          </div>
-
-          {/* Fila 2: Correo */}
-          <div className="flex flex-row gap-4 mt-4 mb-2">
-          <div className="flex flex-col w-1/2">
-            <label className="text-sm font-semibold text-gray-800 mb-2">
-              Correo (Opcional)
-            </label>
-            <Input
-              style={{
-                borderRadius: 5,
-                borderColor: "#ccc",
-                height: 32,
-                fontSize: 14,
-              }}
-              type="email"
-              placeholder="Correo"
-              variant="outlined"
-              className="border rounded-md text-sm"
-            />
-          </div>
-          <div className="w-1/2 flex flex-col">
-              <label className="text-sm font-semibold text-gray-800 mb-2">
-                Teléfono (Opcional)
-              </label>
-              <Input
-                style={{
-                  borderRadius: 5,
-                  borderColor: "#ccc",
-                  height: 32,
-                  fontSize: 14,
-                }}
-                placeholder="Teléfono"
-                variant="outlined"
-                className="border rounded-md  text-sm"
-              />
-            </div>
-            </div>
-        </div>
-      </Modal>
-
-      {/* <Modal
-        open={showAddCategoryModal}
-        style={{ backgroundColor: "#111827" }}
-        title="Agregar categoría"
-        destroyOnClose
         onCancel={() => {
+          console.log("onCancel");
+          setCategory(null);
           setShowAddCategoryModal(false);
-          setSelectedPerson(null);
-          form.resetFields();
-          setAmount(null);
+          form.setFieldValue("category", null);
+          setNewCategory(null);
         }}
-        onOk={() => {
-          AddCategory();
-        }}
-        okButtonProps={{ disabled: !newCategory, style:{color:newCategory?'white':"gray"} }}
-      >
-        <div className="flex flex-col bg-gray-800 gap-4 py-2">
-          <div className="flex flex-row gap-4">
-            <div className="w-1/2 flex flex-col">
-              <label className="text-sm font-semibold text-gray-800 mb-2">
-                Nombre*
-              </label>
-              <Input
-                style={{
-                  borderRadius: 5,
-                  borderColor: "#ccc",
-                  height: 32,
-                  fontSize: 14,
-                }}
-                value={newCategory}e
-                placeholder="Nombre"
-                variant="outlined"
-                className="border rounded-md  text-sm"
-                onChange={(e) => setNewCategory(e.target.value)}
-              />
-            </div>
-
-
-          </div>
-        </div>
-      </Modal> */}
-
-      <AddCategoryModal 
-      showAddCategoryModal={showAddCategoryModal} 
-      setShowAddCategoryModal={setShowAddCategoryModal}
-      onOk={(newCategory)=>{
-        console.log(newCategory, 'newCategory')
-        AddCategory(newCategory);
-      }}
-      onCancel={()=>{
-        console.log('onCancel')
-        setCategory(null);
-        setShowAddCategoryModal(false);
-        form.setFieldValue('category', null);
-        setNewCategory(null);
-      }}
       />
 
       <Modal
@@ -489,6 +468,7 @@ function Dashboard() {
           setCategory(null);
           setAmount(null);
           form.resetFields();
+          form.setFields;
         }}
         centered
       >
@@ -499,6 +479,8 @@ function Dashboard() {
               handleExpenses(e);
             } else if (e.type === 2) {
               handleIngress(e);
+            } else if (e.type === 3) {
+              handleDebt(e);
             }
           }}
           layout="vertical"
@@ -556,12 +538,12 @@ function Dashboard() {
                 ]}
               >
                 <Select
-                value={debtType}
+                  value={debtType}
                   placeholder="Selecciona el tipo de deuda"
                   onChange={(value) => setDebtType(value)}
                 >
-                  <Select.Option value="por_pagar">Por Pagar</Select.Option>
-                  <Select.Option value="por_cobrar">Por Cobrar</Select.Option>
+                  <Select.Option value="to-pay">Por Pagar</Select.Option>
+                  <Select.Option value="to-receive">Por Cobrar</Select.Option>
                 </Select>
               </Form.Item>
 
@@ -583,35 +565,43 @@ function Dashboard() {
                     setSelectedPerson(value);
                   }}
                 >
-                  {peopleCatalog.map((person) => (
-                    <Select.Option key={person.id} value={person.name}>
-                      {person.name}
+                  {!showAddPersonModal && (
+                    <Select.Option value="nuevo">
+                      <div
+                        style={{
+                          background: "#2669bb",
+                          color: "white",
+                          padding: 5,
+                          borderRadius: 10,
+                          textAlign: "center",
+                          marginBottom: 5,
+                          marginTop: 5,
+                        }}
+                      >
+                        Agregar nuevo contacto
+                      </div>
                     </Select.Option>
-                  ))}
-                  <Select.Option value="nuevo">
-                    <div
-                      style={{
-                        background: "#2669bb",
-                        color: "white",
-                        padding: 5,
-                        borderRadius: 10,
-                        textAlign: "center",
-                      }}
-                    >
-                      Agregar nuevo contacto
-                    </div>
-                  </Select.Option>
+                  )}
+                  {contactsCatalog &&
+                    contactsCatalog.length > 0 &&
+                    contactsCatalog.map((person) => (
+                      <Select.Option key={person.contactId} value={person.name}>
+                        {person.name} {person.lastName}
+                      </Select.Option>
+                    ))}
                 </Select>
               </Form.Item>
             </>
           )}
 
           {/* Categoría */}
-          <Form.Item 
-          label="Categoría (Opcional)" 
-          initialValue={category}
-          name="category">
+          <Form.Item
+            label="Categoría (Opcional)"
+            initialValue={category}
+            name="category"
+          >
             <Select
+              showSearch
               placeholder="Selecciona una categoría"
               value={category}
               onChange={(value) => {
@@ -621,11 +611,6 @@ function Dashboard() {
                 setCategory(value);
               }}
             >
-              {labelsCatalog.map((label) => (
-                <Select.Option key={label.id} value={label.name}>
-                  {label.name}
-                </Select.Option>
-              ))}
               {!showAddCategoryModal && (
                 <Select.Option value="nuevo">
                   <div
@@ -635,12 +620,21 @@ function Dashboard() {
                       padding: 5,
                       borderRadius: 10,
                       textAlign: "center",
+                      marginTop: 5,
+                      marginBottom: 5,
                     }}
                   >
-                    Agregar categoría
+                    Agregar categoría nueva
                   </div>
                 </Select.Option>
               )}
+              {categoryCatalog &&
+                categoryCatalog.length > 0 &&
+                categoryCatalog.map((label) => (
+                  <Select.Option key={label.categoryId} value={label.name}>
+                    {label.name}
+                  </Select.Option>
+                ))}
             </Select>
           </Form.Item>
 
@@ -665,8 +659,7 @@ function Dashboard() {
               className="mr-4 mb-0"
               onClick={() => {
                 setAddModal(false);
-                form.resetFields();
-                setAmount(null);
+               
               }}
             >
               Cancelar

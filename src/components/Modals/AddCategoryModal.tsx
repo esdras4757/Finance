@@ -5,6 +5,7 @@ import { AddCategoryModalProps } from '../../types/modalsTypes';
 const AddCategoryModal = ( props : AddCategoryModalProps) => {
     const {showAddCategoryModal, setShowAddCategoryModal, onOk , onCancel} = props;
     const [newCategory, setNewCategory] = React.useState<string>("");
+    const [error, setError] = React.useState<string>("");
   return (
     <Modal
         open={showAddCategoryModal}
@@ -12,13 +13,18 @@ const AddCategoryModal = ( props : AddCategoryModalProps) => {
         title="Agregar categoría"
         destroyOnClose
         onCancel={() => {
+            setNewCategory("");
             setShowAddCategoryModal(false);
             onCancel();
         }}
         onOk={() => {
+            if (!newCategory || newCategory === "") {
+                setError("El nombre de la categoria es requerido");
+                return;
+            }
             onOk(newCategory);
         }}
-        okButtonProps={{ disabled: !newCategory, style:{color:newCategory?'white':"gray"} }}
+        // okButtonProps={{ disabled: !newCategory, style:{color:newCategory?'white':"gray"} }}
       >
         <div className="flex flex-col bg-gray-800 gap-4 py-2">
           {/* Fila 1: Nombre y Teléfono */}
@@ -42,10 +48,12 @@ const AddCategoryModal = ( props : AddCategoryModalProps) => {
                 onChange={(e) => setNewCategory(e.target.value)}
               />
             </div>
-
-
           </div>
         </div>
+
+        {error && (
+          <div className="text-red-500 text-sm mt-2">{error}</div>
+        )}
       </Modal>
   )
 }

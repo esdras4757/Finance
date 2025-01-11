@@ -201,7 +201,7 @@ input[type="search"]::-webkit-search-results-decoration {
     margin-bottom: 0;
 }
 
-.ant-select-dropdown-placement-bottomLeft{
+.ant-select-dropdown{
     background-color: #003457 !important;
     color: white !important;
 }

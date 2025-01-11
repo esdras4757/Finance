@@ -48,7 +48,7 @@ const Login = () => {
     console.log("Received values of form: ", values);
     
     try {
-      const response = await axios.post("http://192.168.1.90:5001/api/users", values);
+      const response = await axios.post(`${import.meta.env.VITE_URL_BASE}/api/users`, values);
       const { data } = response;
       sessionStorage.setItem("token", JSON.stringify(data.user));
       if (response) {
