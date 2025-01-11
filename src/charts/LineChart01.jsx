@@ -24,28 +24,42 @@ function LineChart01({
   const darkMode = currentTheme === 'dark';
   const { tooltipBodyColor, tooltipBgColor, tooltipBorderColor } = chartColors; 
 
+  console.log(data);
   useEffect(() => {
     const ctx = canvas.current;
     // eslint-disable-next-line no-unused-vars
     const newChart = new Chart(ctx, {
       type: 'line',
+
       data: data,
       options: {
         layout: {
           padding: 20,
         },
+        
         scales: {
           y: {
-            display: false,
             beginAtZero: true,
+            min: Math.min(...data.datasets[0].data) - 10, // Ajusta el margen inferior
+            max: Math.max(...data.datasets[0].data) + 10,
           },
           x: {
             type: 'time',
             time: {
               parser: 'MM-DD-YYYY',
-              unit: 'month',
+              unit: 'day',
             },
-            display: false,
+            displayFormats: {
+        minute: 'MMM DD, HH:mm',
+        hour: 'MMM DD, HH:mm',
+        day: 'MMM DD',
+      },
+      ticks: {
+        sampleSize: 10,
+        autoSkip: true,
+        color: darkMode ? tooltipBodyColor.dark : tooltipBodyColor.light
+      },
+            
           },
         },
         plugins: {

@@ -7,29 +7,18 @@ import EditMenu from '../../components/DropdownEditMenu';
 // Import utilities
 import { tailwindConfig, hexToRGB } from '../../utils/Utils';
 
-function DashboardCard02() {
+function DashboardCard02(props) {
+  const {data} = props;
+
+const labels = data.IncomesGraph.labels;
+const values = data.IncomesGraph.amounts;
 
   const chartData = {
-    labels: [
-      '12-01-2022', '01-01-2023', '02-01-2023',
-      '03-01-2023', '04-01-2023', '05-01-2023',
-      '06-01-2023', '07-01-2023', '08-01-2023',
-      '09-01-2023', '10-01-2023', '11-01-2023',
-      '12-01-2023', '01-01-2024', '02-01-2024',
-      '03-01-2024', '04-01-2024', '05-01-2024',
-      '06-01-2024', '07-01-2024', '08-01-2024',
-      '09-01-2024', '10-01-2024', '11-01-2024',
-      '12-01-2024', '01-01-2025',
-    ],
+    labels,
     datasets: [
       // Indigo line
       {
-        data: [
-          622, 622, 426, 471, 365, 365, 238,
-          324, 288, 206, 324, 324, 500, 409,
-          409, 273, 232, 273, 500, 570, 767,
-          808, 685, 767, 685, 685,
-        ],
+        data: values,
         fill: true,
         backgroundColor: function(context) {
           const chart = context.chart;
@@ -97,8 +86,8 @@ function DashboardCard02() {
           </EditMenu> */}
         </header>
         <div className="flex items-start">
-          <div className="text-3xl font-bold text-gray-800 dark:text-gray-100 mr-2">$17,489</div>
-          <div className="text-sm font-medium text-red-700 px-1.5 bg-red-500/20 rounded-full">-14%</div>
+            <div className = {`text-3xl font-bold ${ data.totalExpenses<0? 'dark:text-red-900':'dark:text-gray-100' } mr-2`}>${data.totalExpenses}</div>
+          {/* <div className="text-sm font-medium text-red-700 px-1.5 bg-red-500/20 rounded-full">-14%</div> */}
         </div>
       </div>
       {/* Chart built with Chart.js 3 */}

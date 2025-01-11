@@ -25,6 +25,7 @@ import { useForm } from "antd/es/form/Form";
 import axios from "axios";
 import AddCategoryModal from "../components/Modals/AddCategoryModal";
 import AddContactModal from "../components/Modals/AddContactModal";
+import ConditionalRendering from "../components/ConditionalRendering";
 const typesCatalog = [
   {
     name: "Ingreso",
@@ -119,6 +120,7 @@ const debtCatalog = [
 function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [addModal, setAddModal] = useState(false);
+  const [loaderDashboard, setLoaderDashboard] = useState(true);
   const [type, setType] = useState(1);
   const [selectedPerson, setSelectedPerson] = useState(null);
   const [selectedCategory, setSelectedCategory] = useState(0);
@@ -130,6 +132,7 @@ function Dashboard() {
   const [newCategory, setNewCategory] = useState(null);
   const [categoryCatalog, setCategoryCatalog] = useState([]);
   const [contactsCatalog, setContactsCatalog] = useState([]);
+  const [dashboardData, setDashboardData] = useState([]);
   const [amount, setAmount] = useState(null);
   const { user } = useUser();
   const [form] = useForm();
@@ -152,6 +155,27 @@ function Dashboard() {
     }
   }, [addModal]);
 
+  const getDashboardData = async () => {
+    console.log(user);
+    if (!user || !user.id) {
+      return;
+    }
+    try {
+      setLoaderDashboard(true);
+      setDashboardData(null);
+      const response = await axios.get(
+        `${import.meta.env.VITE_URL_BASE}/api/dashboard/byUserId/${user.id}`
+      );
+      if (response) {
+        setDashboardData(response.data);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoaderDashboard(false);
+    }
+  };
+
   const handleExpenses = async (values) => {
     delete values.type;
     values.amount = parseFloat(values.amount.replace(/,/g, ""));
@@ -160,7 +184,7 @@ function Dashboard() {
         values.userId = user.id;
       }
       const response = await axios.post(
-        "http://192.168.1.90:5001/api/expenses",
+        `${import.meta.env.VITE_URL_BASE}/api/expenses`,
         values
       );
       if (response) {
@@ -179,7 +203,7 @@ function Dashboard() {
         values.userId = user.id;
       }
       const response = await axios.post(
-        "http://192.168.1.90:5001/api/income",
+        `${import.meta.env.VITE_URL_BASE}/api/income`,
         values
       );
       if (response) {
@@ -211,7 +235,7 @@ function Dashboard() {
         values.userId = user.id;
       }
       const response = await axios.post(
-        "http://192.168.1.90:5001/api/debts",
+        `${import.meta.env.VITE_URL_BASE}/api/debts`,
         values
       );
       if (response) {
@@ -250,7 +274,7 @@ function Dashboard() {
       }
 
       const response = await axios.post(
-        "http://192.168.1.90:5001/api/categories",
+        `${import.meta.env.VITE_URL_BASE}/api/categories`,
         {
           name,
           userId: user.id,
@@ -277,7 +301,7 @@ function Dashboard() {
         return;
       }
       const response = await axios.post(
-        "http://192.168.1.90:5001/api/contacts",
+        `${import.meta.env.VITE_URL_BASE}/api/contacts`,
         { ...Contact, userId: user.id }
       );
       if (response) {
@@ -329,6 +353,11 @@ function Dashboard() {
   };
 
   useEffect(() => {
+    getDashboardData();
+  }, []);
+  
+
+  useEffect(() => {
     if (addModal) {
       GetCategoriesCatalog();
       GetContactsCatalog();
@@ -349,6 +378,7 @@ function Dashboard() {
           user={user}
         />
 
+        <ConditionalRendering isLoading={loaderDashboard} data={dashboardData}>
         <main className="grow">
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
             {/* Dashboard actions */}
@@ -394,13 +424,13 @@ function Dashboard() {
             {/* Cards */}
             <div className="grid grid-cols-12 gap-6">
               {/* Line chart (Acme Plus) */}
-              <DashboardCard01 />
+              <DashboardCard01 data={dashboardData} />
               {/* Line chart (Acme Professional) */}
-              <DashboardCard03 />
+              <DashboardCard03 data={dashboardData}/>
               {/* Line chart (Acme Advanced) */}
-              <DashboardCard02 />
+              <DashboardCard02 data={dashboardData}/>
               {/* Bar chart (Direct vs Indirect) */}
-              <DashboardCard04 />
+              <DashboardCard04 data={dashboardData}/>
               {/* Card (Customers) */}
               <DashboardCard10 />
               {/* Line chart (Real Time Value) */}
@@ -423,6 +453,7 @@ function Dashboard() {
             </div>
           </div>
         </main>
+        </ConditionalRendering>
       </div>
 
       <AddContactModal

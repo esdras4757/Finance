@@ -4,20 +4,20 @@ import BarChart from '../../charts/BarChart01';
 // Import utilities
 import { tailwindConfig } from '../../utils/Utils';
 
-function DashboardCard04() {
+function DashboardCard04(props) {
+const {data} = props;
+const labelsExpenses = data.ExpensesGraph.labels;
+const valuesExpenses = data.ExpensesGraph.amounts;
+const labelsIncome = data.IncomesGraph.labels;
+const valuesIncome = data.IncomesGraph.amounts;
 
   const chartData = {
-    labels: [
-      '12-01-2022', '01-01-2023', '02-01-2023',
-      '03-01-2023', '04-01-2023', '05-01-2023',
-    ],
+    labels: labelsExpenses,
     datasets: [
       // Light blue bars
       {
-        label: 'Direct',
-        data: [
-          800, 1600, 900, 1300, 1950, 1700,
-        ],
+        label: 'Egresos',
+        data: valuesExpenses,
         backgroundColor: tailwindConfig().theme.colors.sky[500],
         hoverBackgroundColor: tailwindConfig().theme.colors.sky[600],
         barPercentage: 0.7,
@@ -26,10 +26,8 @@ function DashboardCard04() {
       },
       // Blue bars
       {
-        label: 'Indirect',
-        data: [
-          4900, 2600, 5350, 4800, 5200, 4800,
-        ],
+        label: 'Ingresos',
+        data: valuesIncome,
         backgroundColor: tailwindConfig().theme.colors.blue[500],
         hoverBackgroundColor: tailwindConfig().theme.colors.blue[600],
         barPercentage: 0.7,
@@ -42,7 +40,7 @@ function DashboardCard04() {
   return (
     <div className="flex flex-col col-span-full sm:col-span-6 bg-white dark:bg-gray-800 shadow-sm rounded-xl">
       <header className="px-5 py-4 border-b border-gray-100 dark:border-gray-700/60">
-        <h2 className="font-semibold text-gray-800 dark:text-gray-100">Direct VS Indirect</h2>
+        <h2 className="font-semibold text-gray-800 dark:text-gray-100">Egresos vs Ingresos</h2>
       </header>
       {/* Chart built with Chart.js 3 */}
       {/* Change the height attribute to adjust the chart height */}

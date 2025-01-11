@@ -5,42 +5,23 @@ import { chartAreaGradient } from '../../charts/ChartjsConfig';
 import EditMenu from '../../components/DropdownEditMenu';
 
 // Import utilities
+// ts-ignore
 import { tailwindConfig, hexToRGB } from '../../utils/Utils';
 
-function DashboardCard01() {
+function DashboardCard01(
+  props
+) {
+const {data} = props;
+
+const labels = [...data.ExpensesGraph.labels, ...data.IncomesGraph.labels];
+const values = [...data.ExpensesGraph.amounts, ...data.IncomesGraph.amounts];
 
   const chartData = {
-    labels: [
-      '12-01-2022',
-      '01-01-2023',
-      '02-01-2023',
-      '03-01-2023',
-      '04-01-2023',
-      '05-01-2023',
-      '06-01-2023',
-      '07-01-2023',
-      '08-01-2023',
-      '09-01-2023',
-      '10-01-2023',
-      '11-01-2023',
-      '12-01-2023',
-      '01-01-2024',
-      '02-01-2024',
-      '03-01-2024',
-      '04-01-2024',
-      '05-01-2024',
-      '06-01-2024',
-      '07-01-2024',
-      '08-01-2024',
-      '09-01-2024',
-      '10-01-2024',
-      '11-01-2024',
-      '12-01-2024',
-    ],
+    labels,
     datasets: [
       // Indigo line
       {
-        data: [732, 610, 610, 504, 504, 504, 349, 349, 504, 342, 504, 610, 391, 192, 154, 273, 191, 191, 126, 263, 349, 252, 423, 622, 470, 532],
+        data: values,
         fill: true,
         backgroundColor: function(context) {
           const chart = context.chart;
@@ -91,8 +72,8 @@ function DashboardCard01() {
         </header>
         {/* <div className="text-xs font-semibold text-gray-400 dark:text-gray-500 uppercase mb-1">Sales</div> */}
         <div className="flex items-start">
-          <div className="text-3xl font-bold text-gray-800 dark:text-gray-100 mr-2">$24,780</div>
-          <div className="text-sm font-medium text-green-700 px-1.5 bg-green-500/20 rounded-full">+49% </div>
+        <div className = {`text-3xl font-bold ${ data.totalBalance<0? 'dark:text-red-700':'dark:text-gray-100' } mr-2`}>${data.totalBalance}</div>
+          {/* <div className="text-sm font-medium text-green-700 px-1.5 bg-green-500/20 rounded-full">+49% </div> */}
         </div>
       </div>
       {/* Chart built with Chart.js 3 */}
