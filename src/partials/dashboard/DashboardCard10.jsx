@@ -5,8 +5,9 @@ import Image02 from '../../images/user-36-06.jpg';
 import Image03 from '../../images/user-36-07.jpg';
 import Image04 from '../../images/user-36-08.jpg';
 import Image05 from '../../images/user-36-09.jpg';
+import { RiseOutlined, SwapOutlined , FallOutlined} from '@ant-design/icons';
 
-function DashboardCard10() {
+function DashboardCard10({data}) {
 
   const customers = [
     {
@@ -65,42 +66,68 @@ function DashboardCard10() {
             <thead className="text-xs font-semibold uppercase text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-700 dark:bg-opacity-50">
               <tr>
                 <th className="p-2 whitespace-nowrap">
-                  <div className="font-semibold text-left">Nombre</div>
+                  <div className="font-semibold text-left text-gray-100">Tipo</div>
                 </th>
                 <th className="p-2 whitespace-nowrap">
-                  <div className="font-semibold text-left">Concepto</div>
+                  <div className="font-semibold text-left text-gray-100">Concepto</div>
                 </th>
                 <th className="p-2 whitespace-nowrap">
-                  <div className="font-semibold text-left">Monto</div>
+                  <div className="font-semibold text-left text-gray-100">Monto</div>
                 </th>
                 <th className="p-2 whitespace-nowrap">
-                  <div className="font-semibold text-center">Country</div>
+                  <div className="font-semibold text-center text-gray-100">Fecha</div>
                 </th>
               </tr>
             </thead>
             {/* Table body */}
             <tbody className="text-sm divide-y divide-gray-100 dark:divide-gray-700/60">
               {
-                customers.map(customer => {
+                data.map(movement => {
+                  let amountColor = '#ccc';
+                  let icon
+                  let textType = ''
+                  switch (movement.type) {
+                    case 'income':
+                      amountColor = 'text-green-500';
+                      icon = <RiseOutlined className='text-green-500' style={{fontSize:20}}/>;
+                      textType = 'Ingreso'
+                      break;
+                    case 'expense':
+                      amountColor = 'text-red-400';
+                      icon = <FallOutlined className='text-red-400' style={{fontSize:20}}/>
+                      textType = 'Egreso'
+                      break;
+                    case 'debt':
+                      amountColor = 'text-blue-300';
+                      icon = <SwapOutlined className='text-blue-300' style={{fontSize:20}}/> 
+                      textType = 'Deuda'
+                      break;
+                    default:
+                      amountColor = 'gray'
+                      break;
+                  }
+
                   return (
-                    <tr key={customer.id}>
+                    <tr key={movement.id}>
                       <td className="p-2 whitespace-nowrap">
+                        
                         <div className="flex items-center">
-                          <div className="w-10 h-10 shrink-0 mr-2 sm:mr-3">
-                            {/* <img className="rounded-full" src={customer.image} width="40" height="40" alt={customer.name} /> */}
-                            
+                        <div className="w-10 h-10 shrink-0 mr-2 sm:mr-0">
+                          <div className="flex items-center justify-center w-10 h-10">
+                            {icon}
+                            </div>
                           </div>
-                          <div className="font-medium text-gray-800 dark:text-gray-100">{customer.name}</div>
+                          <div className="font-medium text-gray-800 dark:text-gray-100">{textType}</div>
                         </div>
                       </td>
                       <td className="p-2 whitespace-nowrap">
-                        <div className="text-left">{customer.email}</div>
+                        <div className="text-left text-gray-100">{movement?.concept}</div>
                       </td>
                       <td className="p-2 whitespace-nowrap">
-                        <div className="text-left font-medium text-green-500">{customer.spent}</div>
+                        <div className={`text-left font-medium ${amountColor}`}>$ {movement.amount}</div>
                       </td>
                       <td className="p-2 whitespace-nowrap">
-                        <div className="text-lg text-center">{customer.location}</div>
+                        <div className="text-sm text-center">{movement.creation_date}</div>
                       </td>
                     </tr>
                   )

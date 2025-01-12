@@ -27,98 +27,10 @@ import AddCategoryModal from "../components/Modals/AddCategoryModal";
 import AddContactModal from "../components/Modals/AddContactModal";
 import ConditionalRendering from "../components/ConditionalRendering";
 import dayjs, { Dayjs } from "dayjs";
-const typesCatalog = [
-  {
-    name: "Ingreso",
-    color: "green",
-    id: 1,
-  },
-  {
-    name: "Egreso",
-    color: "red",
-    id: 2,
-  },
-  {
-    name: "Deuda",
-    color: "blue",
-    id: 3,
-  },
-];
-const labelsCatalog = [
-  {
-    name: "Alimentación",
-    id: 1,
-  },
-  {
-    name: "Transporte",
-    id: 2,
-  },
-  {
-    name: "Salud",
-    id: 3,
-  },
-  {
-    name: "Educación",
-    id: 4,
-  },
-  {
-    name: "Entretenimiento",
-    id: 5,
-  },
-];
+// import { DataGrid } from '@mui/material';
+// import Paper from '@mui/material/Paper';
 
-const peopleCatalog = [
-  {
-    name: "Juan",
-    id: 1,
-  },
-  {
-    name: "Pedro",
-    id: 2,
-  },
-  {
-    name: "María",
-    id: 3,
-  },
-  {
-    name: "José",
-    id: 4,
-  },
-  {
-    name: "Ana",
-    id: 5,
-  },
-];
-
-const debtCatalog = [
-  {
-    concept: "Deuda 1",
-    amountRemaining: 1000,
-    id: 1,
-  },
-  {
-    concept: "Deuda 2",
-    amountRemaining: 2000,
-    id: 2,
-  },
-  {
-    concept: "Deuda 3",
-    amountRemaining: 3000,
-    id: 3,
-  },
-  {
-    concept: "Deuda 4",
-    amountRemaining: 4000,
-    id: 4,
-  },
-  {
-    concept: "Deuda 5",
-    amountRemaining: 5000,
-    id: 5,
-  },
-];
-
-function Dashboard() {
+function Ingress() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [addModal, setAddModal] = useState(false);
   const [loaderDashboard, setLoaderDashboard] = useState(true);
@@ -387,29 +299,13 @@ function Dashboard() {
               {/* Left: Title */}
               <div className="mb-4 sm:mb-0 flex justify-between align-middle items-center flex-wrap ">
                 <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold md:mr-4">
-                  Dashboard
+                  Ingresos
                 </h1>
-
                 <button
                   onClick={() => setAddModal(true)}
                   className="btn bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-800 dark:hover:bg-white md:mr-4"
                 >
                   <span className="">+ Agregar</span>
-                </button>
-
-                <button
-                  onClick={() => setAddModal(true)}
-                  className="btn bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-800 dark:hover:bg-white"
-                >
-                  {/* <svg
-                    className="fill-current shrink-0 xs:hidden"
-                    width="16"
-                    height="16"
-                    viewBox="0 0 16 16"
-                  >
-                    <path d="M15 7H9V1c0-.6-.4-1-1-1S7 .4 7 1v6H1c-.6 0-1 .4-1 1s.4 1 1 1h6v6c0 .6.4 1 1 1s1-.4 1-1V9h6c.6 0 1-.4 1-1s-.4-1-1-1z" />
-                  </svg> */}
-                  <span className="">Administrar deuda</span>
                 </button>
               </div>
 
@@ -422,36 +318,7 @@ function Dashboard() {
               </div>
             </div>
 
-            {/* Cards */}
-            <div className="grid grid-cols-12 gap-6">
-              {/* Line chart (Acme Plus) */}
-              <DashboardCard01 data={dashboardData} />
-              {/* Line chart (Acme Professional) */}
-              <DashboardCard03 data={dashboardData}/>
-              {/* Line chart (Acme Advanced) */}
-              <DashboardCard02 data={dashboardData}/>
-              {/* Bar chart (Direct vs Indirect) */}
-              <DashboardCard04 data={dashboardData}/>
-              {/* Card (Customers) */}
-              <DashboardCard10 data={dashboardData?.recentMovements}/>
-              {/* Line chart (Real Time Value) */}
-              {/* <DashboardCard05 /> */}
-              {/* Doughnut chart (Top Countries) */}
-              <DashboardCard06 />
-              {/* Table (Top Channels) */}
-              <DashboardCard07 />
-              {/* Line chart (Sales Over Time) */}
-              <DashboardCard08 />
-              {/* Stacked bar chart (Sales VS Refunds) */}
-              <DashboardCard09 />
-
-              {/* Card (Reasons for Refunds) */}
-              <DashboardCard11 />
-              {/* Card (Recent Activity) */}
-              <DashboardCard12 />
-              {/* Card (Income/Expenses) */}
-              <DashboardCard13 />
-            </div>
+            <DashboardCard10 data={dashboardData?.recentMovements} />
           </div>
         </main>
         </ConditionalRendering>
@@ -734,4 +601,4 @@ function Dashboard() {
   );
 }
 
-export default Dashboard;
+export default Ingress;

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { NavLink, useLocation } from "react-router-dom";
+import { Navigate, NavLink, useLocation, useNavigate } from "react-router-dom";
 
 import SidebarLinkGroup from "./SidebarLinkGroup";
 import { AuditOutlined } from "@ant-design/icons";
@@ -17,7 +17,7 @@ function Sidebar({
 
   const storedSidebarExpanded = localStorage.getItem("sidebar-expanded");
   const [sidebarExpanded, setSidebarExpanded] = useState(storedSidebarExpanded === null ? false : storedSidebarExpanded === "true");
-
+  const navigate = useNavigate();
   // close on click outside
   useEffect(() => {
     const clickHandler = ({ target }) => {
@@ -99,17 +99,22 @@ function Sidebar({
             </h3>
             <ul className="mt-3">
               {/* Dashboard */}
-              <SidebarLinkGroup activecondition={pathname === "/" || pathname.includes("dashboard")}>
+              <div onClick={() => navigate("/dashboard")}>
+              <SidebarLinkGroup  activecondition={pathname === "/" || pathname.includes("dashboard")}>
                 {(handleClick, open) => {
                   return (
                       <a
-                        href="#0"
+                        href="/dashboard"
                         className={`block text-gray-800 dark:text-gray-100 truncate transition duration-150 ${
                           pathname === "/" || pathname.includes("dashboard") ? "" : "hover:text-gray-900 dark:hover:text-white"
                         }`}
                         onClick={(e) => {
                           e.preventDefault();
-                          handleClick();
+                          handleClick(
+                            () => {
+                              navigate("/dashboard");
+                            }
+                          );
                           setSidebarExpanded(true);
                         }}
                       >
@@ -130,6 +135,7 @@ function Sidebar({
                   );
                 }}
               </SidebarLinkGroup>
+              </div>
               {/* Finance */}
               <SidebarLinkGroup activecondition={pathname.includes("finance")}>
                 {(handleClick, open) => {
@@ -169,7 +175,7 @@ function Sidebar({
                           <li className="mb-1 last:mb-0">
                             <NavLink
                               end
-                              to="https://cruip.com/mosaic/"
+                              to="/ingress"
                               className={({ isActive }) =>
                                 "block transition duration-150 truncate " + (isActive ? "text-violet-500" : "text-gray-500/90 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200")
                               }
@@ -260,7 +266,7 @@ function Sidebar({
                           <li className="mb-1 last:mb-0">
                             <NavLink
                               end
-                              to="https://cruip.com/mosaic/"
+                              to="/ingress"
                               className={({ isActive }) =>
                                 "block transition duration-150 truncate " + (isActive ? "text-violet-500" : "text-gray-500/90 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200")
                               }

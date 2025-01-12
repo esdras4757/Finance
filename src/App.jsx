@@ -18,6 +18,7 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './components/AuthProvider';
 import {UserProvider} from './providers/UserProvider';
 import { useAuth } from './components/AuthProvider';
+import Ingress from './pages/Ingress';
 
 function App() {
   const location = useLocation();
@@ -34,6 +35,11 @@ function App() {
         <Route exact path="/dashboard" element={
           <ProtectedRoute>
           <Dashboard />
+        </ProtectedRoute>
+        } />
+        <Route exact path="/Ingress" element={
+          <ProtectedRoute>
+          <Ingress />
         </ProtectedRoute>
         } />
         <Route exact path="/login" element={<Login />} />
