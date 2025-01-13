@@ -5,58 +5,14 @@ import Image02 from '../../images/user-36-06.jpg';
 import Image03 from '../../images/user-36-07.jpg';
 import Image04 from '../../images/user-36-08.jpg';
 import Image05 from '../../images/user-36-09.jpg';
-import { RiseOutlined, SwapOutlined , FallOutlined} from '@ant-design/icons';
+import { RiseOutlined, SwapOutlined , FallOutlined, EditOutlined, DeleteOutlined} from '@ant-design/icons';
+import dayjs from 'dayjs';
+function TableData({data, setData, deleteFN, editFN}) {
 
-function DashboardCard10({data}) {
-
-  const customers = [
-    {
-      id: '0',
-      image: Image01,
-      name: 'Alex Shatov',
-      email: 'alexshatov@gmail.com',
-      location: '🇺🇸',
-      spent: '$2,890.66',
-    },
-    {
-      id: '1',
-      image: Image02,
-      name: 'Philip Harbach',
-      email: 'philip.h@gmail.com',
-      location: '🇩🇪',
-      spent: '$2,767.04',
-    },
-    {
-      id: '2',
-      image: Image03,
-      name: 'Mirko Fisuk',
-      email: 'mirkofisuk@gmail.com',
-      location: '🇫🇷',
-      spent: '$2,996.00',
-    },
-    {
-      id: '3',
-      image: Image04,
-      name: 'Olga Semklo',
-      email: 'olga.s@cool.design',
-      location: '🇮🇹',
-      spent: '$1,220.66',
-    },
-    {
-      id: '4',
-      image: Image05,
-      name: 'Burak Long',
-      email: 'longburak@gmail.com',
-      location: '🇬🇧',
-      spent: '$1,890.66',
-    },
-  ];
 
   return (
     <div className="col-span-full xl:col-span-6 bg-white dark:bg-gray-800 shadow-sm rounded-xl">
-      <header className="px-5 py-4 border-b border-gray-100 dark:border-gray-700/60">
-        <h2 className="font-semibold text-gray-800 dark:text-gray-100">Ultimos movimientos</h2>
-      </header>      
+   
       <div className="p-3">
 
         {/* Table */}
@@ -65,8 +21,8 @@ function DashboardCard10({data}) {
             {/* Table header */}
             <thead className="text-xs font-semibold uppercase text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-700 dark:bg-opacity-50">
               <tr>
-                <th className="p-2 whitespace-nowrap">
-                  <div className="font-semibold text-left text-gray-100">Tipo</div>
+                <th className="p-2 whitespace-nowrap" style={{width:'60px'}}>
+                  <div className="font-semibold text-center text-gray-100" >Tipo</div>
                 </th>
                 <th className="p-2 whitespace-nowrap">
                   <div className="font-semibold text-left text-gray-100">Concepto</div>
@@ -75,7 +31,16 @@ function DashboardCard10({data}) {
                   <div className="font-semibold text-left text-gray-100">Monto</div>
                 </th>
                 <th className="p-2 whitespace-nowrap">
+                  <div className="font-semibold text-left text-gray-100">Categoria</div>
+                </th>
+                <th className="p-2 whitespace-nowrap">
                   <div className="font-semibold text-center text-gray-100">Fecha</div>
+                </th>
+                <th className="p-2 whitespace-nowrap">
+                  <div className="font-semibold text-center text-gray-100">Ultima actualizacion</div>
+                </th>
+                <th className="p-2 whitespace-nowrap">
+                  <div className="font-semibold text-center text-gray-100">Acciones</div>
                 </th>
               </tr>
             </thead>
@@ -83,8 +48,8 @@ function DashboardCard10({data}) {
             <tbody className="text-sm divide-y divide-gray-100 dark:divide-gray-700/60">
               {
                 data.map(movement => {
-                  let amountColor = '#ccc';
-                  let icon
+                  let amountColor = 'text-red-400';
+                  let icon = <FallOutlined className='text-red-400' style={{fontSize:20}}/>
                   let textType = ''
                   switch (movement.type) {
                     case 'income':
@@ -103,7 +68,7 @@ function DashboardCard10({data}) {
                       textType = 'Deuda'
                       break;
                     default:
-                      amountColor = 'gray'
+                      amountColor = 'text-red-400'
                       break;
                   }
 
@@ -112,7 +77,7 @@ function DashboardCard10({data}) {
                       <td className="p-2 whitespace-nowrap">
                         
                         <div className="flex items-center">
-                        <div className="w-10 h-10 shrink-0 mr-2 sm:mr-0">
+                        <div className="w-0 h-10 shrink-0  sm:mr-0">
                           <div className="flex items-center justify-center w-10 h-10">
                             {icon}
                             </div>
@@ -127,7 +92,19 @@ function DashboardCard10({data}) {
                         <div className={`text-left font-medium ${amountColor}`}>$ {movement.amount}</div>
                       </td>
                       <td className="p-2 whitespace-nowrap">
-                        <div className="text-sm text-center">{movement.creation_date}</div>
+                        <div className={`text-left font-medium`}>{movement.category}</div>
+                      </td>
+                      <td className="p-2 whitespace-nowrap">
+                        <div className="text-sm text-center">{dayjs(movement?.creation_date).format('DD-MM-YYYY')}</div>
+                      </td>
+                      <td className="p-2 whitespace-nowrap">
+                        <div className="text-sm text-center">{dayjs(movement?.last_update).format('DD-MM-YYYY')}</div>
+                      </td>
+                      <td className="p-2 whitespace-nowrap">
+                        <div className="flex justify-center space-x-5">
+                            <EditOutlined onClick={()=>editFN()} className='text-blue-400' style={{fontSize:16}}/>
+                            <DeleteOutlined onClick={()=>deleteFN(movement.incomeId)} className='text-red-500' style={{fontSize:16}}/>
+                        </div>
                       </td>
                     </tr>
                   )
@@ -143,4 +120,4 @@ function DashboardCard10({data}) {
   );
 }
 
-export default DashboardCard10;
+export default TableData;

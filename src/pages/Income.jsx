@@ -27,10 +27,9 @@ import AddCategoryModal from "../components/Modals/AddCategoryModal";
 import AddContactModal from "../components/Modals/AddContactModal";
 import ConditionalRendering from "../components/ConditionalRendering";
 import dayjs, { Dayjs } from "dayjs";
-// import { DataGrid } from '@mui/material';
-// import Paper from '@mui/material/Paper';
+import TableData from "../components/Egresos/TableData";
 
-function Ingress() {
+function Egresos() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [addModal, setAddModal] = useState(false);
   const [loaderDashboard, setLoaderDashboard] = useState(true);
@@ -77,7 +76,7 @@ function Ingress() {
       setLoaderDashboard(true);
       setDashboardData(null);
       const response = await axios.get(
-        `${import.meta.env.VITE_URL_BASE}/api/dashboard/byUserId/${user.id}`
+        `${import.meta.env.VITE_URL_BASE}/api/income/byUserId/${user.id}`
       );
       if (response) {
         setDashboardData(response.data);
@@ -88,6 +87,28 @@ function Ingress() {
       setLoaderDashboard(false);
     }
   };
+
+  const editFN = () => {
+    try {
+      const response = axios.put()
+      
+    } catch (error) {
+      
+    }
+  };
+
+  const deleteFN = (id) => {
+    try {
+      const response = axios.delete(`${import.meta.env.VITE_URL_BASE}/api/income/${id}`)
+      if(response){
+        setDashboardData(dashboardData.filter(item => item.incomeId !== id))
+      }
+    }
+    catch (error) {
+  
+    }
+  }
+
 
   const handleExpenses = async (values) => {
     delete values.type;
@@ -318,7 +339,7 @@ function Ingress() {
               </div>
             </div>
 
-            <DashboardCard10 data={dashboardData?.recentMovements} />
+            <TableData data={dashboardData} deleteFN={deleteFN}/>
           </div>
         </main>
         </ConditionalRendering>
@@ -601,4 +622,4 @@ function Ingress() {
   );
 }
 
-export default Ingress;
+export default Egresos;

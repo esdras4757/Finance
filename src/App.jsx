@@ -18,7 +18,8 @@ import ProtectedRoute from './components/ProtectedRoute';
 import { AuthProvider } from './components/AuthProvider';
 import {UserProvider} from './providers/UserProvider';
 import { useAuth } from './components/AuthProvider';
-import Ingress from './pages/Ingress';
+import Egresos from './pages/Egresos';
+import Income from './pages/Income';
 
 function App() {
   const location = useLocation();
@@ -37,9 +38,14 @@ function App() {
           <Dashboard />
         </ProtectedRoute>
         } />
-        <Route exact path="/Ingress" element={
+        <Route exact path="/Egress" element={
           <ProtectedRoute>
-          <Ingress />
+          <Egresos/>
+        </ProtectedRoute>
+        } />
+        <Route exact path="/income" element={
+          <ProtectedRoute>
+          <Income/>
         </ProtectedRoute>
         } />
         <Route exact path="/login" element={<Login />} />
