@@ -31,7 +31,7 @@ function TableData({data, setData, deleteFN, editFN}) {
                   <div className="font-semibold text-left text-gray-100">Monto</div>
                 </th>
                 <th className="p-2 whitespace-nowrap">
-                  <div className="font-semibold text-left text-gray-100">Categoria</div>
+                  <div className="font-semibold text-center text-gray-100">Categoria</div>
                 </th>
                 <th className="p-2 whitespace-nowrap">
                   <div className="font-semibold text-center text-gray-100">Fecha</div>
@@ -47,9 +47,9 @@ function TableData({data, setData, deleteFN, editFN}) {
             {/* Table body */}
             <tbody className="text-sm divide-y divide-gray-100 dark:divide-gray-700/60">
               {
-                data.map(movement => {
-                  let amountColor = 'text-red-400';
-                  let icon = <FallOutlined className='text-red-400' style={{fontSize:20}}/>
+                 data && data.map(movement => {
+                  let amountColor = 'text-green-500';
+                  let icon = <RiseOutlined className='text-green-500' style={{fontSize:20}}/>
                   let textType = ''
 
                   return (
@@ -69,10 +69,10 @@ function TableData({data, setData, deleteFN, editFN}) {
                         <div className="text-left text-gray-100">{movement?.concept}</div>
                       </td>
                       <td className="p-2 whitespace-nowrap">
-                        <div className={`text-left font-medium ${amountColor}`}>$ {movement.amount?.toLocaleString()}</div>
+                        <div className={`text-left font-medium ${amountColor}`}>$ {movement?.amount?.toLocaleString()}</div>
                       </td>
                       <td className="p-2 whitespace-nowrap">
-                        <div className={`text-left font-medium`}>{movement.category}</div>
+                        <div className={`text-center font-medium`}>{movement?.category ? movement.category:'-'}</div>
                       </td>
                       <td className="p-2 whitespace-nowrap">
                         <div className="text-sm text-center">{dayjs(movement?.creation_date).format('DD-MM-YYYY')}</div>
@@ -83,7 +83,7 @@ function TableData({data, setData, deleteFN, editFN}) {
                       <td className="p-2 whitespace-nowrap">
                         <div className="flex justify-center space-x-5">
                             <EditOutlined onClick={()=>editFN()} className='text-blue-400' style={{fontSize:16}}/>
-                            <DeleteOutlined onClick={()=>deleteFN(movement.expenseId)} className='text-red-500' style={{fontSize:16}}/>
+                            <DeleteOutlined onClick={()=>deleteFN(movement.incomeId)} className='text-red-500' style={{fontSize:16}}/>
                         </div>
                       </td>
                     </tr>

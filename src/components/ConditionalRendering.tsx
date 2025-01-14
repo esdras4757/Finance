@@ -1,6 +1,6 @@
 import React from 'react'
 import { ReactNode } from 'react';
-import {isNil} from 'lodash';
+import {isEmpty, isNil} from 'lodash';
 import { Result, Skeleton, Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
 interface ConditionalRenderingProps {
@@ -23,6 +23,14 @@ const ConditionalRendering = ( props: ConditionalRenderingProps ) => {
             transform: 'translate(-50%, -50%)'
         }} size="large" />;
       }
+
+      if (!isNil(data) && isEmpty(data) && !isLoading) {
+        return <Result
+        style={{color: 'white'}}
+        title={<span className='text-white'>¡Ups!</span>}
+        subTitle={<span className='text-white'>No hay datos para mostrar. Agrega información para comenzar.</span>}
+      />;
+      }
     
       if (isNil(data) && !isLoading) {
         return <Result
@@ -32,6 +40,8 @@ const ConditionalRendering = ( props: ConditionalRenderingProps ) => {
         subTitle={<span className='text-white'> Ah ocurrido un error intentalo mas tarde</span>}
       />
       }
+
+
     
         if (!isNil(data) && !isLoading && children) {
             return <>{children}</>;

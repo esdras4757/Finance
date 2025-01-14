@@ -224,6 +224,7 @@ function Dashboard() {
     values.contactId = contactsCatalog.find(
       (contact) => contact.name === values.selectedPerson
     ).contactId;
+    console.log(values);
     delete values.type;
     values.type = values.debtType
     delete values.selectedPerson;
@@ -311,7 +312,7 @@ function Dashboard() {
         form.setFields([{ name: "selectedPerson", value: Contact.name }]);
         setContactsCatalog([
           ...contactsCatalog,
-          { name: Contact.name, id: response.data.contactId },
+          { name: Contact.name, contactId: response.data.contactId },
         ]);
       }
     } catch (error) {
@@ -507,6 +508,9 @@ function Dashboard() {
         <Form
           form={form}
           onFinish={(e) => {
+            const currentTime = dayjs().format("HH:mm:ss");
+            e.creation_date = dayjs(e.creation_date).format("YYYY-MM-DD") + " " + currentTime;
+            console.log(e);
             if (e.type === 2) {
               handleExpenses(e);
             } else if (e.type === 1) {

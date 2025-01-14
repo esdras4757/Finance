@@ -27,7 +27,7 @@ import AddCategoryModal from "../components/Modals/AddCategoryModal";
 import AddContactModal from "../components/Modals/AddContactModal";
 import ConditionalRendering from "../components/ConditionalRendering";
 import dayjs, { Dayjs } from "dayjs";
-import TableData from "../components/Egresos/TableData";
+import TableData from "../components/Ingresos/TableData";
 
 function Egresos() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
@@ -312,7 +312,7 @@ function Egresos() {
           user={user}
         />
 
-        <ConditionalRendering isLoading={loaderDashboard} data={dashboardData}>
+        
         <main className="grow">
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
             {/* Dashboard actions */}
@@ -338,11 +338,13 @@ function Egresos() {
                 <Datepicker align="right" />
               </div>
             </div>
+            <ConditionalRendering isLoading={loaderDashboard} data={dashboardData}>
 
             <TableData data={dashboardData} deleteFN={deleteFN}/>
+            </ConditionalRendering>
+
           </div>
         </main>
-        </ConditionalRendering>
       </div>
 
       <AddContactModal

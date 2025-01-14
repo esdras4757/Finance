@@ -10,8 +10,8 @@ import { tailwindConfig, hexToRGB } from '../../utils/Utils';
 function DashboardCard02(props) {
   const {data} = props;
 
-const labels = data.IncomesGraph.labels;
-const values = data.IncomesGraph.amounts;
+  const labels = data.ExpensesGraph.labels;
+  const values = data.ExpensesGraph.amounts;
 
   const chartData = {
     labels,
@@ -86,7 +86,7 @@ const values = data.IncomesGraph.amounts;
           </EditMenu> */}
         </header>
         <div className="flex items-start">
-            <div className = {`text-3xl font-bold ${ data.totalExpenses<0? 'dark:text-red-900':'dark:text-gray-100' } mr-2`}>${data.totalExpenses}</div>
+            <div className = {`text-3xl font-bold ${ data.totalExpenses<0? 'dark:text-red-900':'dark:text-gray-100' } mr-2`}>${data?.totalExpenses?.toLocaleString()}</div>
           {/* <div className="text-sm font-medium text-red-700 px-1.5 bg-red-500/20 rounded-full">-14%</div> */}
         </div>
       </div>

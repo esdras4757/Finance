@@ -137,7 +137,7 @@ function Sidebar({
               </SidebarLinkGroup>
               </div>
               {/* Finance */}
-              <SidebarLinkGroup activecondition={pathname.includes("finance")}>
+              <SidebarLinkGroup activecondition={pathname.includes("finance") || pathname.includes("income") || pathname.includes("egress")}>
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>

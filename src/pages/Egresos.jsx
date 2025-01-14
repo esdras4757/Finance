@@ -76,7 +76,7 @@ function Egresos() {
       setLoaderDashboard(true);
       setDashboardData(null);
       const response = await axios.get(
-        `${import.meta.env.VITE_URL_BASE}/api/income/byUserId/${user.id}`
+        `${import.meta.env.VITE_URL_BASE}/api/expenses/byUserId/${user.id}`
       );
       if (response) {
         setDashboardData(response.data);
@@ -99,9 +99,9 @@ function Egresos() {
 
   const deleteFN = (id) => {
     try {
-      const response = axios.delete(`${import.meta.env.VITE_URL_BASE}/api/income/${id}`)
+      const response = axios.delete(`${import.meta.env.VITE_URL_BASE}/api/expenses/${id}`)
       if(response){
-        setDashboardData(dashboardData.filter(item => item.incomeId !== id))
+        setDashboardData(dashboardData.filter(item => item.expenseId !== id))
       }
     }
     catch (error) {
@@ -312,7 +312,6 @@ function Egresos() {
           user={user}
         />
 
-        <ConditionalRendering isLoading={loaderDashboard} data={dashboardData}>
         <main className="grow">
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
             {/* Dashboard actions */}
@@ -338,11 +337,11 @@ function Egresos() {
                 <Datepicker align="right" />
               </div>
             </div>
-
+            <ConditionalRendering isLoading={loaderDashboard} data={dashboardData}>
             <TableData data={dashboardData} deleteFN={deleteFN}/>
+            </ConditionalRendering>
           </div>
         </main>
-        </ConditionalRendering>
       </div>
 
       <AddContactModal
