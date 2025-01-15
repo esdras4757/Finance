@@ -101,10 +101,10 @@ console.log(values)
         <div className = {`text-3xl font-bold ${ data.totalBalance<0? 'dark:text-red-700':'dark:text-gray-100' } mr-2`}>${data?.totalBalance?.toLocaleString()}</div>
           {/* <div className="text-sm font-medium text-green-700 px-1.5 bg-green-500/20 rounded-full">+49% </div> */}
         </div>
-        <div className="flex items-center justify-between my-1"> 
+        {/* <div className="flex items-center justify-between my-1"> 
           <h2 className="font-semibold text-gray-500 dark:text-yellow-600 mb-2" style={{fontSize:13}}>Saldo despues de deudas:</h2>
           <span className=' font-semibold text-gray-500 dark:text-yellow-600 mb-2' style={{fontSize:13}}>{(data.totalBalance - data.totalDebts).toLocaleString()}</span>
-          </div>
+          </div> */}
       </div>
       
       {/* Chart built with Chart.js 3 */}

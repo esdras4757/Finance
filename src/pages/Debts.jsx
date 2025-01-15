@@ -17,7 +17,7 @@ import DashboardCard10 from "../partials/dashboard/DashboardCard10";
 import DashboardCard11 from "../partials/dashboard/DashboardCard11";
 import DashboardCard12 from "../partials/dashboard/DashboardCard12";
 import DashboardCard13 from "../partials/dashboard/DashboardCard13";
-import { Button, Form, Input, Modal, Select, Tooltip } from "antd";
+import { Button, Form, Input, Modal, Select, Tabs, Tooltip } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { useAuth } from "../components/AuthProvider";
 import { useUser } from "../providers/UserProvider";
@@ -27,9 +27,9 @@ import AddCategoryModal from "../components/Modals/AddCategoryModal";
 import AddContactModal from "../components/Modals/AddContactModal";
 import ConditionalRendering from "../components/ConditionalRendering";
 import dayjs, { Dayjs } from "dayjs";
-import TableData from "../components/Egresos/TableData";
+import TableData from "../components/Debts/TableData";
 
-function Egresos() {
+function Debts() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [addModal, setAddModal] = useState(false);
   const [loaderDashboard, setLoaderDashboard] = useState(true);
@@ -45,9 +45,16 @@ function Egresos() {
   const [categoryCatalog, setCategoryCatalog] = useState([]);
   const [contactsCatalog, setContactsCatalog] = useState([]);
   const [dashboardData, setDashboardData] = useState([]);
+  const [debsToReceive, setDebsToReceive] = useState([]);
+  const [debsToPay, setDebsToPay] = useState([]);
+
   const [amount, setAmount] = useState(null);
   const { user } = useUser();
   const [form] = useForm();
+
+  const onChange = (key) => {
+    console.log(key);
+  };
 
   useEffect(() => {
     if (selectedPerson === "new") {
@@ -62,24 +69,52 @@ function Egresos() {
       setCategory(null);
       setSelectedPerson(null);
       form.resetFields();
-      form.setFields [{ name: "category", value: null }, { name: "selectedPerson", value: null }];
+      form.setFields[
+        ({ name: "category", value: null },
+        { name: "selectedPerson", value: null })
+      ];
       form.setFields;
     }
   }, [addModal]);
 
-  const getDashboardData = async () => {
+  const getDebtsToRecibe = async () => {
     console.log(user);
     if (!user || !user.id) {
       return;
     }
     try {
       setLoaderDashboard(true);
-      setDashboardData(null);
+      setDebsToReceive(null);
       const response = await axios.get(
-        `${import.meta.env.VITE_URL_BASE}/api/expenses/byUserId/${user.id}`
+        `${import.meta.env.VITE_URL_BASE}/api/debts/byUserId/${
+          user.id
+        }/type/to-receive`
       );
       if (response) {
-        setDashboardData(response.data);
+        setDebsToReceive(response.data);
+      }
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setLoaderDashboard(false);
+    }
+  };
+
+  const getDebtsTopay = async () => {
+    console.log(user);
+    if (!user || !user.id) {
+      return;
+    }
+    try {
+      setLoaderDashboard(true);
+      setDebsToPay(null);
+      const response = await axios.get(
+        `${import.meta.env.VITE_URL_BASE}/api/debts/byUserId/${
+          user.id
+        }/type/to-pay`
+      );
+      if (response) {
+        setDebsToPay(response.data);
       }
     } catch (error) {
       console.log(error);
@@ -90,25 +125,21 @@ function Egresos() {
 
   const editFN = () => {
     try {
-      const response = axios.put()
-      
-    } catch (error) {
-      
-    }
+      const response = axios.put();
+    } catch (error) {}
   };
 
-  const deleteFN = (id) => {
+  const deleteFN = async (id) => {
     try {
-      const response = axios.delete(`${import.meta.env.VITE_URL_BASE}/api/expenses/${id}`)
-      if(response){
-        setDashboardData(dashboardData.filter(item => item.expenseId !== id))
+      const response = await axios.delete(
+        `${import.meta.env.VITE_URL_BASE}/api/debts/${id}`
+      );
+      if (response && response.status === 200) {
+        getDebtsTopay();
+        getDebtsToRecibe();
       }
-    }
-    catch (error) {
-  
-    }
-  }
-
+    } catch (error) {}
+  };
 
   const handleExpenses = async (values) => {
     delete values.type;
@@ -158,7 +189,7 @@ function Egresos() {
       (contact) => contact.name === values.selectedPerson
     ).contactId;
     delete values.type;
-    values.type = values.debtType
+    values.type = values.debtType;
     delete values.selectedPerson;
     delete values.category;
     delete values.debtType;
@@ -287,9 +318,9 @@ function Egresos() {
   };
 
   useEffect(() => {
-    getDashboardData();
+    getDebtsTopay();
+    getDebtsToRecibe();
   }, []);
-  
 
   useEffect(() => {
     if (addModal) {
@@ -298,8 +329,63 @@ function Egresos() {
     }
   }, [addModal]);
 
+  const items = [
+    {
+      key: "1",
+      label: <span className="text-red-400 text-base">Deudas por pagar</span>,
+      children: (
+        <>
+          {debsToPay && debsToPay.length > 0 && (
+            <>
+              <ConditionalRendering
+                isLoading={loaderDashboard}
+                data={debsToPay}
+              >
+                {/* Right: Actions */}
+                <div className="grid grid-flow-col sm:auto-cols-max mb-4 sm:justify-end gap-2">
+                  {/* Filter button */}
+                  <FilterButton align="right" />
+                  {/* Datepicker built with React Day Picker */}
+                  <Datepicker align="right" />
+                </div>
+
+                <TableData data={debsToPay} deleteFN={deleteFN} />
+              </ConditionalRendering>
+            </>
+          )}
+        </>
+      ),
+    },
+    {
+      key: "2",
+      label: (
+        <span className="text-green-600 text-base">Deudas por cobrar</span>
+      ),
+      children: (
+        <>
+          {debsToReceive && debsToReceive.length > 0 && (
+            <>
+              <ConditionalRendering
+                isLoading={loaderDashboard}
+                data={debsToReceive}
+              >
+                <div className="grid grid-flow-col sm:auto-cols-max mb-4 sm:justify-end gap-2">
+                  {/* Filter button */}
+                  <FilterButton align="right" />
+                  {/* Datepicker built with React Day Picker */}
+                  <Datepicker align="right" />
+                </div>
+                <TableData data={debsToReceive} deleteFN={deleteFN} />
+              </ConditionalRendering>
+            </>
+          )}
+        </>
+      ),
+    },
+  ];
+
   return (
-    <div className="flex h-screen overflow-hidden" style={{height : '100dvh'}}>
+    <div className="flex h-screen overflow-hidden" style={{ height: "100dvh" }}>
       {/* Sidebar */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
@@ -319,7 +405,7 @@ function Egresos() {
               {/* Left: Title */}
               <div className="mb-4 sm:mb-0 flex justify-between align-middle items-center flex-wrap ">
                 <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold md:mr-4">
-                  Egresos
+                  Deudas
                 </h1>
                 <button
                   onClick={() => setAddModal(true)}
@@ -328,18 +414,19 @@ function Egresos() {
                   <span className="">+ Agregar</span>
                 </button>
               </div>
-
-              {/* Right: Actions */}
-              <div className="grid grid-flow-col sm:auto-cols-max  sm:justify-end gap-2">
-                {/* Filter button */}
-                <FilterButton align="right" />
-                {/* Datepicker built with React Day Picker */}
-                <Datepicker align="right" />
-              </div>
             </div>
-            <ConditionalRendering isLoading={loaderDashboard} data={dashboardData}>
-            <TableData data={dashboardData} deleteFN={deleteFN}/>
-            </ConditionalRendering>
+
+            <Tabs
+              defaultActiveKey="1"
+              centered
+              style={{ color: "white" }}
+              indicator={{
+                width: "100%",
+                align: "center",
+              }}
+              items={items}
+              onChange={onChange}
+            />
           </div>
         </main>
       </div>
@@ -408,33 +495,33 @@ function Egresos() {
           {/* Tipo de Registro */}
 
           <div className="flex justify-between items-center gap-3">
-          <Form.Item
-            className="w-1/2"
-            label="Tipo de Registro*"
-            name="type"
-            initialValue={1}
-            rules={[
-              { required: true, message: "Selecciona un tipo de registro" },
-            ]}
-          >
-            <Select
-              placeholder="Selecciona un tipo de registro"
-              onChange={(value) => setType(value)}
+            <Form.Item
+              className="w-1/2"
+              label="Tipo de Registro*"
+              name="type"
+              initialValue={1}
+              rules={[
+                { required: true, message: "Selecciona un tipo de registro" },
+              ]}
             >
-              <Select.Option value={1}>Ingreso</Select.Option>
-              <Select.Option value={2}>Egreso</Select.Option>
-              <Select.Option value={3}>Deuda</Select.Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item
-          className="w-1/2"
-                label="Fecha"
-                initialValue={dayjs().format("YYYY-MM-DD")}
-                name="creation_date"
-                rules={[{ required: true, message: "Ingresa la fecha" }]}
+              <Select
+                placeholder="Selecciona un tipo de registro"
+                onChange={(value) => setType(value)}
               >
-                <Input 
+                <Select.Option value={1}>Ingreso</Select.Option>
+                <Select.Option value={2}>Egreso</Select.Option>
+                <Select.Option value={3}>Deuda</Select.Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              className="w-1/2"
+              label="Fecha"
+              initialValue={dayjs().format("YYYY-MM-DD")}
+              name="creation_date"
+              rules={[{ required: true, message: "Ingresa la fecha" }]}
+            >
+              <Input
                 defaultValue={dayjs().format("YYYY-MM-DD")}
                 onChange={(e) => {
                   console.log(e.target.value);
@@ -446,9 +533,9 @@ function Egresos() {
                 }}
                 type="date"
                 formattedValue={new Date()}
-                />
-              </Form.Item>
-              </div>
+              />
+            </Form.Item>
+          </div>
           {/* Monto */}
           <Form.Item
             label="Monto*"
@@ -490,9 +577,6 @@ function Egresos() {
                   <Select.Option value="to-receive">Por Cobrar</Select.Option>
                 </Select>
               </Form.Item>
-              
-              
-              
 
               {/* Persona */}
               <Form.Item
@@ -606,7 +690,6 @@ function Egresos() {
               className="mr-4 mb-0"
               onClick={() => {
                 setAddModal(false);
-               
               }}
             >
               Cancelar
@@ -621,4 +704,4 @@ function Egresos() {
   );
 }
 
-export default Egresos;
+export default Debts;

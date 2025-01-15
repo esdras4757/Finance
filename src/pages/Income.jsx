@@ -299,7 +299,7 @@ function Egresos() {
   }, [addModal]);
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden" style={{height : '100dvh'}}>
       {/* Sidebar */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
@@ -311,8 +311,6 @@ function Egresos() {
           setSidebarOpen={setSidebarOpen}
           user={user}
         />
-
-        
         <main className="grow">
           <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
             {/* Dashboard actions */}
@@ -338,6 +336,11 @@ function Egresos() {
                 <Datepicker align="right" />
               </div>
             </div>
+
+            <div>
+              {/* <DashboardCard01 /> */}
+            </div>
+
             <ConditionalRendering isLoading={loaderDashboard} data={dashboardData}>
 
             <TableData data={dashboardData} deleteFN={deleteFN}/>

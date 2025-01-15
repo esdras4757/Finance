@@ -15,6 +15,10 @@
     @apply text-2xl font-extrabold tracking-tight;
 }
 
+body{
+    height: 100dvh !important;
+}
+
 @screen md {
     .h1 {
         @apply text-5xl;
@@ -220,4 +224,8 @@ input[type="search"]::-webkit-search-results-decoration {
 
 .ant-modal {
     padding: 0 !important;
+}
+
+.ant-tabs-tab{
+    color: white !important;
 }
