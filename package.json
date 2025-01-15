@@ -1,11 +1,14 @@
 {
   "name": "mosaic-react",
+  "homepage": "https://esdras4757.github.io/Finance",
   "version": "0.1.0",
   "type": "module",
   "scripts": {
     "dev": "vite --port 3000 --host",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "predeploy": "npm run build",
+    "deploy": "gh-pages -d dist"
   },
   "dependencies": {
     "@ant-design/icons": "^5.5.2",
