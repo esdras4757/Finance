@@ -7,7 +7,6 @@ export default defineConfig({
   define: {
     'process.env': process.env
   },
-  base: '/Finance',
   plugins: [react()],
   resolve: {
     alias: {
