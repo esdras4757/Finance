@@ -8,7 +8,7 @@ import EditMenu from '../../components/DropdownEditMenu';
 import { tailwindConfig, hexToRGB } from '../../utils/Utils';
 
 function DashboardCard03Debts(props) {
-  const {data} = props;
+  const {data, showLabel} = props;
 
 
   const chartData = {
@@ -63,7 +63,7 @@ function DashboardCard03Debts(props) {
     <div className="flex flex-col col-span-full sm:col-span-6 xl:col-span-4 bg-white dark:bg-gray-800 shadow-sm rounded-xl">
       <div className="px-5 pt-5">
         <header className="flex justify-between items-start mb-2">
-          {/* <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2 ">{data?.name}</h2> */}
+          {showLabel && <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-100 mb-2 ">{data?.name}</h2>}
           {/* Menu button */}
           {/* <EditMenu align="right" className="relative inline-flex">
             <li>

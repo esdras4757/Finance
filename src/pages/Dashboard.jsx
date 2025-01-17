@@ -428,9 +428,9 @@ function Dashboard() {
               {/* Line chart (Acme Plus) */}
               <DashboardCard01 data={dashboardData} />
               {/* Line chart (Acme Professional) */}
-              <DashboardCard03 data={dashboardData}/>
+              <DashboardCard03 data={dashboardData} showLabel={true}/>
               {/* Line chart (Acme Advanced) */}
-              <DashboardCard02 data={dashboardData}/>
+              <DashboardCard02 data={dashboardData} showLabel={true}/>
               {/* Bar chart (Direct vs Indirect) */}
               <DashboardCard04 data={dashboardData}/>
               {/* Card (Customers) */}
