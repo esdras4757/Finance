@@ -12,7 +12,7 @@ interface ConditionalRenderingProps {
 
 const ConditionalRendering = ( props: ConditionalRenderingProps ) => {
     const { children, isLoading, data } = props;
-
+  console.log(data)
     if (isNil(data) && isLoading) {
         return <Spin 
         indicator={<LoadingOutlined spin />}

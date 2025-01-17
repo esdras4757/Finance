@@ -46,6 +46,7 @@ function Egresos() {
   const [contactsCatalog, setContactsCatalog] = useState([]);
   const [dashboardData, setDashboardData] = useState([]);
   const [amount, setAmount] = useState(null);
+  const [graph, setGraph] = useState(null);
   const { user } = useUser();
   const [form] = useForm();
 
@@ -62,7 +63,10 @@ function Egresos() {
       setCategory(null);
       setSelectedPerson(null);
       form.resetFields();
-      form.setFields [{ name: "category", value: null }, { name: "selectedPerson", value: null }];
+      form.setFields[
+        ({ name: "category", value: null },
+        { name: "selectedPerson", value: null })
+      ];
       form.setFields;
     }
   }, [addModal]);
@@ -79,7 +83,8 @@ function Egresos() {
         `${import.meta.env.VITE_URL_BASE}/api/income/byUserId/${user.id}`
       );
       if (response) {
-        setDashboardData(response.data);
+        setDashboardData(response?.data?.result);
+        setGraph(response?.data);
       }
     } catch (error) {
       console.log(error);
@@ -90,25 +95,20 @@ function Egresos() {
 
   const editFN = () => {
     try {
-      const response = axios.put()
-      
-    } catch (error) {
-      
-    }
+      const response = axios.put();
+    } catch (error) {}
   };
 
   const deleteFN = (id) => {
     try {
-      const response = axios.delete(`${import.meta.env.VITE_URL_BASE}/api/income/${id}`)
-      if(response){
-        setDashboardData(dashboardData.filter(item => item.incomeId !== id))
+      const response = axios.delete(
+        `${import.meta.env.VITE_URL_BASE}/api/income/${id}`
+      );
+      if (response) {
+        setDashboardData(dashboardData.filter((item) => item.incomeId !== id));
       }
-    }
-    catch (error) {
-  
-    }
-  }
-
+    } catch (error) {}
+  };
 
   const handleExpenses = async (values) => {
     delete values.type;
@@ -158,7 +158,7 @@ function Egresos() {
       (contact) => contact.name === values.selectedPerson
     ).contactId;
     delete values.type;
-    values.type = values.debtType
+    values.type = values.debtType;
     delete values.selectedPerson;
     delete values.category;
     delete values.debtType;
@@ -289,7 +289,6 @@ function Egresos() {
   useEffect(() => {
     getDashboardData();
   }, []);
-  
 
   useEffect(() => {
     if (addModal) {
@@ -299,7 +298,7 @@ function Egresos() {
   }, [addModal]);
 
   return (
-    <div className="flex h-screen overflow-hidden" style={{height : '100dvh'}}>
+    <div className="flex h-screen overflow-hidden" style={{ height: "100dvh" }}>
       {/* Sidebar */}
       <Sidebar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
@@ -312,40 +311,47 @@ function Egresos() {
           user={user}
         />
         <main className="grow">
-          <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
+          <div className="px-4 sm:px-6 lg:px-8 py-5 w-full max-w-9xl mx-auto">
             {/* Dashboard actions */}
-            <div className="sm:flex sm:justify-between sm:items-center mb-8">
+            <div className="sm:flex sm:justify-between sm:items-center mb-5 sm:mb-6">
               {/* Left: Title */}
-              <div className="mb-4 sm:mb-0 flex justify-between align-middle items-center flex-wrap ">
+              <div className="mb-2 sm:mb-0 flex justify-between align-middle items-center flex-wrap w-full">
                 <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold md:mr-4">
                   Ingresos
                 </h1>
                 <button
                   onClick={() => setAddModal(true)}
-                  className="btn bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-800 dark:hover:bg-white md:mr-4"
+                  className="btn bg-gray-900 text-white-900 hover:bg-gray-800 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-500 md:mr-4"
                 >
-                  <span className="">+ Agregar</span>
+                  <span className="w-full">+ Agregar</span>
                 </button>
               </div>
 
+              
+            </div>
+
+            <div>{/* <DashboardCard01 /> */}</div>
+
+            <ConditionalRendering
+              isLoading={loaderDashboard}
+              data={dashboardData}
+            >
+              <>
+              <div className="w-full flex flex-wrap gap-4 mb-5">
+                <div className="w-full">
+                  <DashboardCard03 data={graph} />
+                </div>
+              </div>
               {/* Right: Actions */}
-              <div className="grid grid-flow-col sm:auto-cols-max  sm:justify-end gap-2">
+              <div className="grid grid-flow-col sm:auto-cols-max  sm:justify-end gap-2 mb-4">
                 {/* Filter button */}
                 <FilterButton align="right" />
                 {/* Datepicker built with React Day Picker */}
                 <Datepicker align="right" />
               </div>
-            </div>
-
-            <div>
-              {/* <DashboardCard01 /> */}
-            </div>
-
-            <ConditionalRendering isLoading={loaderDashboard} data={dashboardData}>
-
-            <TableData data={dashboardData} deleteFN={deleteFN}/>
+                <TableData data={dashboardData} deleteFN={deleteFN} />
+              </>
             </ConditionalRendering>
-
           </div>
         </main>
       </div>
@@ -414,33 +420,33 @@ function Egresos() {
           {/* Tipo de Registro */}
 
           <div className="flex justify-between items-center gap-3">
-          <Form.Item
-            className="w-1/2"
-            label="Tipo de Registro*"
-            name="type"
-            initialValue={1}
-            rules={[
-              { required: true, message: "Selecciona un tipo de registro" },
-            ]}
-          >
-            <Select
-              placeholder="Selecciona un tipo de registro"
-              onChange={(value) => setType(value)}
+            <Form.Item
+              className="w-1/2"
+              label="Tipo de Registro*"
+              name="type"
+              initialValue={1}
+              rules={[
+                { required: true, message: "Selecciona un tipo de registro" },
+              ]}
             >
-              <Select.Option value={1}>Ingreso</Select.Option>
-              <Select.Option value={2}>Egreso</Select.Option>
-              <Select.Option value={3}>Deuda</Select.Option>
-            </Select>
-          </Form.Item>
-
-          <Form.Item
-          className="w-1/2"
-                label="Fecha"
-                initialValue={dayjs().format("YYYY-MM-DD")}
-                name="creation_date"
-                rules={[{ required: true, message: "Ingresa la fecha" }]}
+              <Select
+                placeholder="Selecciona un tipo de registro"
+                onChange={(value) => setType(value)}
               >
-                <Input 
+                <Select.Option value={1}>Ingreso</Select.Option>
+                <Select.Option value={2}>Egreso</Select.Option>
+                <Select.Option value={3}>Deuda</Select.Option>
+              </Select>
+            </Form.Item>
+
+            <Form.Item
+              className="w-1/2"
+              label="Fecha"
+              initialValue={dayjs().format("YYYY-MM-DD")}
+              name="creation_date"
+              rules={[{ required: true, message: "Ingresa la fecha" }]}
+            >
+              <Input
                 defaultValue={dayjs().format("YYYY-MM-DD")}
                 onChange={(e) => {
                   console.log(e.target.value);
@@ -452,9 +458,9 @@ function Egresos() {
                 }}
                 type="date"
                 formattedValue={new Date()}
-                />
-              </Form.Item>
-              </div>
+              />
+            </Form.Item>
+          </div>
           {/* Monto */}
           <Form.Item
             label="Monto*"
@@ -496,9 +502,6 @@ function Egresos() {
                   <Select.Option value="to-receive">Por Cobrar</Select.Option>
                 </Select>
               </Form.Item>
-              
-              
-              
 
               {/* Persona */}
               <Form.Item
@@ -612,7 +615,6 @@ function Egresos() {
               className="mr-4 mb-0"
               onClick={() => {
                 setAddModal(false);
-               
               }}
             >
               Cancelar

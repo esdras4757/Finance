@@ -44,6 +44,7 @@ function Egresos() {
   const [newCategory, setNewCategory] = useState(null);
   const [categoryCatalog, setCategoryCatalog] = useState([]);
   const [contactsCatalog, setContactsCatalog] = useState([]);
+  const [graph, setGraph] = useState(null);
   const [dashboardData, setDashboardData] = useState([]);
   const [amount, setAmount] = useState(null);
   const { user } = useUser();
@@ -79,7 +80,8 @@ function Egresos() {
         `${import.meta.env.VITE_URL_BASE}/api/expenses/byUserId/${user.id}`
       );
       if (response) {
-        setDashboardData(response.data);
+        setDashboardData(response?.data?.result);
+        setGraph(response?.data);
       }
     } catch (error) {
       console.log(error);
@@ -313,32 +315,41 @@ function Egresos() {
         />
 
         <main className="grow">
-          <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
+          <div className="px-4 sm:px-6 lg:px-8 py-5 sm:py-8 w-full max-w-9xl mx-auto">
             {/* Dashboard actions */}
-            <div className="sm:flex sm:justify-between sm:items-center mb-8">
+            <div className="sm:flex sm:justify-between sm:items-center mb-5 sm:mb-8">
               {/* Left: Title */}
-              <div className="mb-4 sm:mb-0 flex justify-between align-middle items-center flex-wrap ">
+              <div className="mb-2 sm:mb-0 flex justify-between align-middle items-center flex-wrap w-full">
                 <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold md:mr-4">
                   Egresos
                 </h1>
                 <button
                   onClick={() => setAddModal(true)}
-                  className="btn bg-gray-900 text-gray-100 hover:bg-gray-800 dark:bg-gray-100 dark:text-gray-800 dark:hover:bg-white md:mr-4"
+                  className="btn bg-gray-900 text-white-900 hover:bg-gray-800 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-500 md:mr-4"
                 >
-                  <span className="">+ Agregar</span>
+                  <span className="w-full">+ Agregar</span>
                 </button>
               </div>
-
+            </div>
+            <ConditionalRendering
+              isLoading={loaderDashboard}
+              data={dashboardData}
+            >
+              <>
+              <div className="w-full flex flex-wrap gap-4 mb-5">
+                <div className="w-full">
+                  <DashboardCard02 data={graph} />
+                </div>
+              </div>
               {/* Right: Actions */}
-              <div className="grid grid-flow-col sm:auto-cols-max  sm:justify-end gap-2">
+              <div className="grid grid-flow-col sm:auto-cols-max  sm:justify-end gap-2 mb-4">
                 {/* Filter button */}
                 <FilterButton align="right" />
                 {/* Datepicker built with React Day Picker */}
                 <Datepicker align="right" />
               </div>
-            </div>
-            <ConditionalRendering isLoading={loaderDashboard} data={dashboardData}>
-            <TableData data={dashboardData} deleteFN={deleteFN}/>
+                <TableData data={dashboardData} deleteFN={deleteFN} />
+              </>
             </ConditionalRendering>
           </div>
         </main>

@@ -21,9 +21,9 @@ function TableData({data, setData, deleteFN, editFN}) {
             {/* Table header */}
             <thead className="text-xs font-semibold uppercase text-gray-400 dark:text-gray-500 bg-gray-50 dark:bg-gray-700 dark:bg-opacity-50">
               <tr>
-                <th className="p-2 whitespace-nowrap" style={{width:'60px'}}>
+                {/* <th className="p-2 whitespace-nowrap" style={{width:'60px'}}>
                   <div className="font-semibold text-center text-gray-100" >Tipo</div>
-                </th>
+                </th> */}
                 <th className="p-2 whitespace-nowrap">
                   <div className="font-semibold text-left text-gray-100">Concepto</div>
                 </th>
@@ -54,7 +54,7 @@ function TableData({data, setData, deleteFN, editFN}) {
 
                   return (
                     <tr key={movement.id}>
-                      <td className="p-2 whitespace-nowrap">
+                      {/* <td className="p-2 whitespace-nowrap">
                         
                         <div className="flex items-center">
                         <div className="w-0 h-10 shrink-0  sm:mr-0">
@@ -62,9 +62,8 @@ function TableData({data, setData, deleteFN, editFN}) {
                             {icon}
                             </div>
                           </div>
-                          {/* <div className="font-medium text-gray-800 dark:text-gray-100">{textType}</div> */}
                         </div>
-                      </td>
+                      </td> */}
                       <td className="p-2 whitespace-nowrap">
                         <div className="text-left text-gray-100">{movement?.concept}</div>
                       </td>

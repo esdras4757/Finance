@@ -382,11 +382,11 @@ function Dashboard() {
 
         <ConditionalRendering isLoading={loaderDashboard} data={dashboardData}>
         <main className="grow">
-          <div className="px-4 sm:px-6 lg:px-8 py-8 w-full max-w-9xl mx-auto">
+          <div className="px-4 sm:px-6 lg:px-8 py-5 sm:py-8 w-full max-w-9xl mx-auto">
             {/* Dashboard actions */}
-            <div className="sm:flex sm:justify-between sm:items-center mb-8">
+            <div className="sm:flex sm:justify-between sm:items-center mb-6 sm:mb-8">
               {/* Left: Title */}
-              <div className="mb-4 sm:mb-0 flex justify-between align-middle items-center flex-wrap ">
+              <div className="mb-5 sm:mb-0 flex justify-between align-middle items-center flex-wrap ">
                 <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold md:mr-4">
                   Dashboard
                 </h1>
@@ -438,20 +438,20 @@ function Dashboard() {
               {/* Line chart (Real Time Value) */}
               {/* <DashboardCard05 /> */}
               {/* Doughnut chart (Top Countries) */}
-              <DashboardCard06 />
+              {/* <DashboardCard06 /> */}
               {/* Table (Top Channels) */}
-              <DashboardCard07 />
+              {/* <DashboardCard07 /> */}
               {/* Line chart (Sales Over Time) */}
-              <DashboardCard08 />
+              {/* <DashboardCard08 /> */}
               {/* Stacked bar chart (Sales VS Refunds) */}
-              <DashboardCard09 />
+              {/* <DashboardCard09 /> */}
 
               {/* Card (Reasons for Refunds) */}
-              <DashboardCard11 />
+              {/* <DashboardCard11 /> */}
               {/* Card (Recent Activity) */}
-              <DashboardCard12 />
+              {/* <DashboardCard12 /> */}
               {/* Card (Income/Expenses) */}
-              <DashboardCard13 />
+              {/* <DashboardCard13 /> */}
             </div>
           </div>
         </main>
