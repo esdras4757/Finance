@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 import Image01 from "../../images/user-36-05.jpg";
 import Image02 from "../../images/user-36-06.jpg";
@@ -17,8 +17,20 @@ import {
   DownCircleOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
-import { Button } from "antd";
-function TableData({ data, setData, deleteFN, editFN }) {
+import { Button, Input, Modal } from "antd";
+function TableData({
+  data,
+  setData,
+  deleteFN,
+  editFN,
+  incrementDebt,
+  decrementDebt,
+}) {
+  const [incrementDebtModal, setIncrementDebtModal] = useState(false);
+  const [decrementDebtModal, setDecrementDebtModal] = useState(false);
+  const [debtId, setDebtId] = useState(null);
+  const [amount, setAmount] = useState(null);
+
   return (
     <div className="col-span-full xl:col-span-6 bg-white dark:bg-gray-800 shadow-sm rounded-xl">
       <div className="p-3">
@@ -187,56 +199,79 @@ function TableData({ data, setData, deleteFN, editFN }) {
                       </td>
                       <td className="p-2 whitespace-nowrap">
                         <div className="flex justify-center space-x-5">
-
                           <div className="text-center">
-                          <UpCircleOutlined
-                            title="Aumentar deuda"
-                            onClick={() => deleteFN(movement.debtId)}
-                            className="text-red-400"
-                            style={{ fontSize: 16 }}
-                          />
-                          <div className="text-center mt-1 text-sm xs:hidden text-wrap text-red-400" style={{fontSize:10}}>Incrementar</div>
+                            <UpCircleOutlined
+                              title="Aumentar deuda"
+                              onClick={() => {setIncrementDebtModal(true); setDebtId(movement.debtId)}}
+                              className="text-red-400"
+                              style={{ fontSize: 16 }}
+                            />
+                            <div
+                              className="text-center mt-1 text-sm xs:hidden text-wrap text-red-400"
+                              style={{ fontSize: 10 }}
+                            >
+                              Incrementar
+                            </div>
                           </div>
 
                           <div className="text-center ">
-                          <DownCircleOutlined
-                            title="Reducir deuda"
-                            onClick={() => deleteFN(movement.debtId)}
-                            className="text-blue-600"
-                            style={{ fontSize: 16 }}
-                          />
-                          <div className="text-center mt-1 text-sm xs:hidden text-wrap text-blue-600" style={{fontSize:10}}>Abonar</div>
+                            <DownCircleOutlined
+                              title="Reducir deuda"
+                              onClick={() => {setDecrementDebtModal(true); setDebtId(movement.debtId)}}
+                              className="text-blue-600"
+                              style={{ fontSize: 16 }}
+                            />
+                            <div
+                              className="text-center mt-1 text-sm xs:hidden text-wrap text-blue-600"
+                              style={{ fontSize: 10 }}
+                            >
+                              Abonar
+                            </div>
                           </div>
 
                           <div className="text-center">
-                          <CheckOutlined
-                            title="Marcar como pagado"
-                            onClick={() => deleteFN(movement.debtId)}
-                            className="text-green-500"
-                            style={{ fontSize: 16 }}
-                          />
-                          <div className="text-center mt-1 text-sm xs:hidden text-wrap text-green-500" style={{fontSize:10}}>Completar</div>
+                            <CheckOutlined
+                              title="Marcar como pagado"
+                              onClick={() => deleteFN(movement.debtId)}
+                              className="text-green-500"
+                              style={{ fontSize: 16 }}
+                            />
+                            <div
+                              className="text-center mt-1 text-sm xs:hidden text-wrap text-green-500"
+                              style={{ fontSize: 10 }}
+                            >
+                              Completar
+                            </div>
                           </div>
 
+                          <div className="text-center">
+                            <EditOutlined
+                              title="Editar"
+                              onClick={() => editFN()}
+                              className="text-blue-400"
+                              style={{ fontSize: 18 }}
+                            />
+                            <div
+                              className="text-center mt-1 text-sm xs:hidden text-wrap text-blue-400"
+                              style={{ fontSize: 10 }}
+                            >
+                              Editar
+                            </div>
+                          </div>
 
                           <div className="text-center">
-                          <EditOutlined
-                            title="Editar"
-                            onClick={() => editFN()}
-                            className="text-blue-400"
-                            style={{ fontSize: 18 }}
-                          />
-                          <div className="text-center mt-1 text-sm xs:hidden text-wrap text-blue-400" style={{fontSize:10}}>Editar</div>
-                          </div>
-                          
-                          <div className="text-center">
-                          <DeleteOutlined
-                            title="Eliminar"
-                            onClick={() => deleteFN(movement.debtId)}
-                            className="text-red-500"
-                            style={{ fontSize: 16 }}
-                          />
-                          <div className="text-center mt-1 text-sm xs:hidden text-wrap text-red-500" style={{fontSize:10}}>Eliminar</div>
+                            <DeleteOutlined
+                              title="Eliminar"
+                              onClick={() => deleteFN(movement.debtId)}
+                              className="text-red-500"
+                              style={{ fontSize: 16 }}
+                            />
+                            <div
+                              className="text-center mt-1 text-sm xs:hidden text-wrap text-red-500"
+                              style={{ fontSize: 10 }}
+                            >
+                              Eliminar
+                            </div>
                           </div>
                         </div>
                       </td>
@@ -247,6 +282,48 @@ function TableData({ data, setData, deleteFN, editFN }) {
           </table>
         </div>
       </div>
+
+      <Modal
+        title="Incrementar deuda"
+        open={incrementDebtModal}
+        onClose={() => setIncrementDebtModal(false)}
+        onCancel={() => setIncrementDebtModal(false)}
+        onOk={() => incrementDebt(debtId,+amount)}
+        width={300}
+      >
+        <div className="flex justify-center items-center py-2">
+          <Input
+            className=""
+            value={amount}
+            placeholder="Monto a incrementar"
+            type="number"
+            style={{ width: 250 }}
+            onChange={(e) => setAmount(e.target.value)}
+          />{" "}
+          $
+        </div>
+      </Modal>
+
+      <Modal
+        title="Abonar a deuda"
+        open={decrementDebtModal}
+        onClose={() => setDecrementDebtModal(false)}
+        onCancel={() => setDecrementDebtModal(false)}
+        onOk={() => decrementDebt(debtId, +amount)}
+        width={300}
+      >
+        <div className="flex justify-center items-center py-2">
+          <Input
+            className=""
+            value={amount}
+            placeholder="Monto a abonar"
+            type="number"
+            style={{ width: 250 }}
+            onChange={(e) => setAmount(e.target.value)}
+          />{" "}
+          $
+        </div>
+      </Modal>
     </div>
   );
 }

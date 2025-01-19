@@ -163,6 +163,33 @@ function Debts() {
     } catch (error) {}
   };
 
+  const incrementDebt = async (id, amount) => {
+    try {
+      const response = await axios.patch(
+        `${import.meta.env.VITE_URL_BASE}/api/debts/increment/${id}`,
+        { amount }
+      );
+      if (response && response.status === 200) {
+        getDebtsTopay();
+        getDebtsToRecibe();
+      }
+    } catch (error) {}
+  };
+
+
+  const decrementDebt = async (id, amount) => {
+    try {
+      const response = await axios.patch(
+        `${import.meta.env.VITE_URL_BASE}/api/debts/decrement/${id}`,
+        { amount }
+      );
+      if (response && response.status === 200) {
+        getDebtsTopay();
+        getDebtsToRecibe();
+      }
+    } catch (error) {}
+  };
+
   const handleExpenses = async (values) => {
     delete values.type;
     values.amount = parseFloat(values.amount.replace(/,/g, ""));
@@ -380,7 +407,7 @@ function Debts() {
                   <Datepicker align="right" />
                 </div>
 
-                <TableData data={debsToPay} deleteFN={deleteFN} />
+                <TableData data={debsToPay} deleteFN={deleteFN} incrementDebt={incrementDebt} decrementDebt={decrementDebt} />
               </ConditionalRendering>
             </>
           
@@ -409,7 +436,7 @@ function Debts() {
                   {/* Datepicker built with React Day Picker */}
                   <Datepicker align="right" />
                 </div>
-                <TableData data={debsToReceive} deleteFN={deleteFN} />
+                <TableData data={debsToReceive} deleteFN={deleteFN} incrementDebt={incrementDebt} decrementDebt={decrementDebt} />
               </ConditionalRendering>
             </>
           )}
