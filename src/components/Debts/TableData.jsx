@@ -28,7 +28,7 @@ function TableData({
 }) {
   const [incrementDebtModal, setIncrementDebtModal] = useState(false);
   const [decrementDebtModal, setDecrementDebtModal] = useState(false);
-  const [debtId, setDebtId] = useState(null);
+  const [debt, setDebt] = useState(null);
   const [amount, setAmount] = useState(null);
 
   return (
@@ -202,7 +202,7 @@ function TableData({
                           <div className="text-center">
                             <UpCircleOutlined
                               title="Aumentar deuda"
-                              onClick={() => {setIncrementDebtModal(true); setDebtId(movement.debtId)}}
+                              onClick={() => {setIncrementDebtModal(true); setDebt(movement)}}
                               className="text-red-400"
                               style={{ fontSize: 16 }}
                             />
@@ -217,7 +217,7 @@ function TableData({
                           <div className="text-center ">
                             <DownCircleOutlined
                               title="Reducir deuda"
-                              onClick={() => {setDecrementDebtModal(true); setDebtId(movement.debtId)}}
+                              onClick={() => {setDecrementDebtModal(true); setDebt(movement)}}
                               className="text-blue-600"
                               style={{ fontSize: 16 }}
                             />
@@ -288,7 +288,11 @@ function TableData({
         open={incrementDebtModal}
         onClose={() => setIncrementDebtModal(false)}
         onCancel={() => setIncrementDebtModal(false)}
-        onOk={() => incrementDebt(debtId,+amount)}
+        onOk={() => {
+          const value = debt.amount + +amount ;
+          console.log(value)
+          incrementDebt(debt.debtId,+value)
+          }}
         width={300}
       >
         <div className="flex justify-center items-center py-2">
@@ -298,7 +302,9 @@ function TableData({
             placeholder="Monto a incrementar"
             type="number"
             style={{ width: 250 }}
-            onChange={(e) => setAmount(e.target.value)}
+            onChange={(e) => {
+              setAmount(e.target.value)
+              }}
           />{" "}
           $
         </div>
