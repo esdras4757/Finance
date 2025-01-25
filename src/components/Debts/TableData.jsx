@@ -289,10 +289,15 @@ function TableData({
         onClose={() => setIncrementDebtModal(false)}
         onCancel={() => setIncrementDebtModal(false)}
         onOk={() => {
-          const value = debt.amount + +amount ;
-          console.log(value)
-          incrementDebt(debt.debtId,+value)
-          }}
+          let value = debt.amount + +amount ;
+          if(debt.type === 'to-receive'){
+            value = debt.amount + +amount
+            incrementDebt(debt.debtId,+value)
+          }
+          else if(debt.type === 'to-pay'){
+            value = debt.amount - +amount
+            incrementDebt(debt.debtId,+value)
+          }}}
         width={300}
       >
         <div className="flex justify-center items-center py-2">
@@ -315,7 +320,18 @@ function TableData({
         open={decrementDebtModal}
         onClose={() => setDecrementDebtModal(false)}
         onCancel={() => setDecrementDebtModal(false)}
-        onOk={() => decrementDebt(debtId, +amount)}
+        onOk={() => {
+          let value = debt.amount - +amount ;
+          if(debt.type === 'to-receive'){
+            value = debt.amount - +amount
+            decrementDebt(debt.debtId,+value)
+          }
+          else if(debt.type === 'to-pay'){
+            value = debt.amount + +amount
+            decrementDebt(debt.debtId,+value
+            )
+          }
+        }}
         width={300}
       >
         <div className="flex justify-center items-center py-2">
