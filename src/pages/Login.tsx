@@ -18,7 +18,7 @@ const Login = () => {
   const {updateUser} = useUser();
   const [isLoadingLogin, setIsLoadingLogin] = useState(false);
 
-  console.log(import.meta.env.VITE_URL_BASE);
+  console.log(import.meta.env.VITE_URL_BASE, 'url base');
   // sessionStorage.removeItem("token");
 
   const loginFetch = async (values: any) => {
