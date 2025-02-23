@@ -1,5 +1,5 @@
 import { Input, Modal } from 'antd';
-import React from 'react'
+import React, { useState } from 'react'
 import { AddCategoryModalProps, AddContactModalProps } from '../../types/modalsTypes';
 import { AddContactType } from '../../types/contactsTypes';
 
@@ -11,6 +11,7 @@ const AddContactModal = ( props : AddContactModalProps ) => {
     const [email, setEmail] = React.useState<string>("");
     const [phone, setPhone] = React.useState<string>("");
     const [error, setError] = React.useState<string>("");
+    const [loading, setLoading] = useState(false);
 
   return (
     <Modal
@@ -26,12 +27,21 @@ const AddContactModal = ( props : AddContactModalProps ) => {
             setShowAddContactModal(false);
             onCancel();
         }}
+        okButtonProps={{
+          disabled: loading,
+          loading: loading,
+          style: { backgroundColor: loading ? "white" : "#1890ff" },
+        }}
+        cancelButtonProps={{
+          disabled: loading,
+          style: { color: loading ? "gray" : "black" },
+        }}
         onOk={() => {
           if (!name || name === "") {
             setError("El nombre es requerido");
             return;
           }
-          onOk({name, lastName, email, phone});
+          onOk({name, lastName, email, phone}, setLoading);
         }}
       >
         <div className="flex flex-col bg-gray-800 gap-4 py-2">

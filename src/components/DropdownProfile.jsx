@@ -44,7 +44,7 @@ function DropdownProfile({
         onClick={() => setDropdownOpen(!dropdownOpen)}
         aria-expanded={dropdownOpen}
       >
-        <img className="w-8 h-8 rounded-full" src={UserAvatar} width="32" height="32" alt="User" />
+        {/* <img className="w-8 h-8 rounded-full" src={UserAvatar} width="32" height="32" alt="User" /> */}
         <div className="flex items-center truncate">
             <span className="truncate ml-2 mr-2 text-base font-medium text-gray-600 dark:text-gray-100 group-hover:text-gray-800 dark:group-hover:text-white">
             {user.name} {user.lastName}
@@ -71,7 +71,7 @@ function DropdownProfile({
           onBlur={() => setDropdownOpen(false)}
         >
           <div className="pt-0.5 pb-2 px-3 mb-1 border-b border-gray-200 dark:border-gray-700/60">
-            <div className="font-medium text-gray-800 dark:text-gray-100">Acme Inc.</div>
+            <div className="font-medium text-gray-800 dark:text-gray-100">{user?.name}</div>
             <div className="text-xs text-gray-500 dark:text-gray-400 italic">Administrator</div>
           </div>
           <ul>

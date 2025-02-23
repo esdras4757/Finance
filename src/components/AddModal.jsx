@@ -1,4 +1,4 @@
-import { Button, Form, Input, Modal, Select } from "antd";
+import { Button, Form, Input, Modal, Select, Spin } from "antd";
 import { useForm } from "antd/es/form/Form";
 import React, { useState } from "react";
 import { useEffect } from "react";
@@ -9,7 +9,7 @@ import { useUser } from "../providers/UserProvider";
 import axios from "axios";
 
 const AddModal = (props) => {
-  const { addModal, setAddModal, processType = null, setDashboardData } = props;
+  const { addModal, setAddModal, processType = null, setDashboardData, onAdd } = props;
   let initialType = 1;
   let title = "Agregar ingreso";
   if (processType === "expenses") {
@@ -28,6 +28,7 @@ const AddModal = (props) => {
   const [debtType, setDebtType] = useState(null);
   const [category, setCategory] = useState(null);
   const [newCategory, setNewCategory] = useState(null);
+  const [addLogin, setAddLogin] = useState(false);
   const [type, setType] = useState(initialType);
   const [amount, setAmount] = useState(null);
   const [form] = useForm();
@@ -80,6 +81,8 @@ const AddModal = (props) => {
       }
     } catch (error) {
         console.log(error);
+    } finally {
+        setAddLogin(false);
     }
   };
 
@@ -104,7 +107,9 @@ const AddModal = (props) => {
       }
     } catch (error) {
         console.log(error);
-    }
+    }finally {
+      setAddLogin(false);
+  }
   };
 
   const handleDebt = async (values) => {
@@ -138,7 +143,9 @@ const AddModal = (props) => {
         form.resetFields();
         onAdd();
       }
-    } catch (error) {}
+    } catch (error) {}finally {
+      setAddLogin(false);
+  }
   };
 
   const handleChange = (e) => {
@@ -162,7 +169,8 @@ const AddModal = (props) => {
     console.log(formattedValue);
   };
 
-  const AddCategory = async (name) => {
+  const AddCategory = async (name,setLoading) => {
+    setLoading(true);
     try {
       if (!user || !user.id || !name) {
         return;
@@ -187,10 +195,13 @@ const AddModal = (props) => {
       }
     } catch (error) {
       console.log(error);
+    } finally {
+        setLoading(false);
     }
   };
 
-  const AddContact = async (Contact) => {
+  const AddContact = async (Contact, setLoading) => {
+    setLoading(true);
     try {
       if (!user || !user.id || !Contact) {
         return;
@@ -210,6 +221,9 @@ const AddModal = (props) => {
       }
     } catch (error) {
       console.log(error);
+    }
+    finally {
+        setLoading(false);
     }
   };
 
@@ -259,9 +273,9 @@ const AddModal = (props) => {
       <AddContactModal
         showAddContactModal={showAddPersonModal}
         setShowAddContactModal={setShowAddPersonModal}
-        onOk={(contact) => {
+        onOk={(contact,setLoading) => {
           console.log(contact, "contact");
-          AddContact(contact);
+          AddContact(contact,setLoading);
         }}
         onCancel={() => {
           console.log("onCancel");
@@ -275,9 +289,10 @@ const AddModal = (props) => {
       <AddCategoryModal
         showAddCategoryModal={showAddCategoryModal}
         setShowAddCategoryModal={setShowAddCategoryModal}
-        onOk={(newCategory) => {
+        okB
+        onOk={(newCategory,setLoading) => {
           console.log(newCategory, "newCategory");
-          AddCategory(newCategory);
+          AddCategory(newCategory,setLoading);
         }}
         onCancel={() => {
           console.log("onCancel");
@@ -311,6 +326,7 @@ const AddModal = (props) => {
               dayjs(e.creation_date).format("YYYY-MM-DD") + " " + currentTime;
             e.type = type;
             console.log(e);
+            setAddLogin(true);
             if (e.type === 2) {
               handleExpenses(e);
             } else if (e.type === 1) {
@@ -529,8 +545,8 @@ const AddModal = (props) => {
             >
               Cancelar
             </Button>
-            <Button type="primary" htmlType="submit">
-              Guardar
+            <Button type="primary" htmlType="submit" disabled={addLogin}>
+              {addLogin ? <Spin size="small"></Spin> : "Guardar"}
             </Button>
           </Form.Item>
         </Form>
