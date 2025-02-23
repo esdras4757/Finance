@@ -68,7 +68,6 @@ function Sidebar({
         <div className="flex justify-between mb-10 pr-3 sm:px-2">
           {/* Close button */}
           <button
-          
             ref={trigger}
             className="lg:hidden text-gray-500 hover:text-gray-400"
             onClick={() => setSidebarOpen(!sidebarOpen)}
