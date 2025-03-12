@@ -7,7 +7,7 @@ import Image04 from '../../images/user-36-08.jpg';
 import Image05 from '../../images/user-36-09.jpg';
 import { RiseOutlined, SwapOutlined , FallOutlined, EditOutlined, DeleteOutlined} from '@ant-design/icons';
 import dayjs from 'dayjs';
-function TableData({data, setData, deleteFN, editFN}) {
+function TableData({data, setData, deleteFN, editFN, setEditModal, setItemSelected}) {
 
 
   return (
@@ -71,7 +71,7 @@ function TableData({data, setData, deleteFN, editFN}) {
                         <div className={`text-left font-medium ${amountColor}`}>$ {movement.amount?.toLocaleString()}</div>
                       </td>
                       <td className="p-2 whitespace-nowrap">
-                        <div className={`text-left font-medium`}>{movement.category}</div>
+                        <div className={`text-left font-medium`}>{movement.category? movement.category.name : '-'}</div>
                       </td>
                       <td className="p-2 whitespace-nowrap">
                         <div className="text-sm text-center">{dayjs(movement?.creation_date).format('DD-MM-YYYY')}</div>
@@ -81,7 +81,10 @@ function TableData({data, setData, deleteFN, editFN}) {
                       </td>
                       <td className="p-2 whitespace-nowrap">
                         <div className="flex justify-center space-x-5">
-                            <EditOutlined onClick={()=>editFN()} className='text-blue-400' style={{fontSize:16}}/>
+                            <EditOutlined onClick={()=>{
+                              setItemSelected(movement);
+                              setEditModal(true);
+                            }} className='text-blue-400' style={{fontSize:16}}/>
                             <DeleteOutlined onClick={()=>deleteFN(movement.expenseId)} className='text-red-500' style={{fontSize:16}}/>
                         </div>
                       </td>

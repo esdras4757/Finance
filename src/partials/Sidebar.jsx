@@ -138,7 +138,7 @@ function Sidebar({
               </SidebarLinkGroup>
               </div>
               {/* Finance */}
-              <SidebarLinkGroup activecondition={pathname.includes("finance") || pathname.includes("income") || pathname.includes("egress") || pathname.includes("debts")}>
+              <SidebarLinkGroup activecondition={pathname.includes("finance") || pathname.includes("income") || pathname.includes("egress") || pathname.includes("debts") || pathname.includes("transactions")}>
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
@@ -215,7 +215,7 @@ function Sidebar({
                           <li className="mb-1 last:mb-0">
                             <NavLink
                               end
-                              to="https://cruip.com/mosaic/"
+                              to="/transactions"
                               className={({ isActive }) =>
                                 "block transition duration-150 truncate " + (isActive ? "text-violet-500" : "text-gray-500/90 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200")
                               }

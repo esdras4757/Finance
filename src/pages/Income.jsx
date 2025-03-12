@@ -29,10 +29,12 @@ import ConditionalRendering from "../components/ConditionalRendering";
 import dayjs, { Dayjs } from "dayjs";
 import TableData from "../components/Ingresos/TableData";
 import AddModal from "../components/AddModal";
+import EditModal from "../components/EditModal";
 
 function Egresos() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [addModal, setAddModal] = useState(false);
+  const [editModal, setEditModal] = useState(false);
   const [loaderDashboard, setLoaderDashboard] = useState(true);
   const [type, setType] = useState(1);
   const [selectedPerson, setSelectedPerson] = useState(null);
@@ -46,6 +48,7 @@ function Egresos() {
   const [categoryCatalog, setCategoryCatalog] = useState([]);
   const [contactsCatalog, setContactsCatalog] = useState([]);
   const [dashboardData, setDashboardData] = useState([]);
+  const [itemSelected, setItemSelected] = useState(null);
   const [amount, setAmount] = useState(null);
   const [graph, setGraph] = useState(null);
   const { user } = useUser();
@@ -350,7 +353,7 @@ function Egresos() {
                 {/* Datepicker built with React Day Picker */}
                 <Datepicker align="right" />
               </div>
-                <TableData data={dashboardData} deleteFN={deleteFN} />
+                <TableData data={dashboardData} setEditModal={setEditModal} deleteFN={deleteFN} setItemSelected={setItemSelected}/>
               </>
             </ConditionalRendering>
           </div>
@@ -358,6 +361,7 @@ function Egresos() {
       </div>
 
   <AddModal addModal={addModal} setAddModal={setAddModal} processType={'Ingress'} onAdd={getDashboardData} setDashboardData={setDashboardData}/>  
+  <EditModal editModal={editModal}  setEditModal={setEditModal} itemSelected={itemSelected} setDashboardData={setDashboardData} getDashboardData={getDashboardData}/>
     </div>
   );
 }
