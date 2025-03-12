@@ -8,6 +8,7 @@ import { useNavigate } from "react-router-dom";
 import { AnimatePresence, motion, progress } from "motion/react";
 import { useAuth } from "../components/AuthProvider";
 import { useUser } from '../providers/UserProvider';
+import { set } from "lodash";
 
 const Login = () => {
   const [error, setError] = useState("");
@@ -39,6 +40,9 @@ const Login = () => {
       if (error.response.status === 401) {
         setError("Usuario o contraseña incorrectos");
       }
+      else{
+        setError("Algo salio mal, intenta de nuevo");
+      }
     } finally {
       setIsLoadingLogin(false);
     }
@@ -46,19 +50,22 @@ const Login = () => {
 
   const registerFetch = async(values: any) => {
     console.log("Received values of form: ", values);
-    
+    setIsLoadingLogin(true);
     try {
       const response = await axios.post(`${import.meta.env.VITE_URL_BASE}/api/users`, values);
       const { data } = response;
-      sessionStorage.setItem("token", JSON.stringify(data.user));
+      sessionStorage.setItem("token", JSON.stringify(data));
       if (response) {
         loginFn();
         navigate("/dashboard");
+        updateUser(data.user);
       }
     } catch (error:any) {
       if (error.response.status === 401) {
         setError("El correo ya a sido registrado");
       }
+    } finally {
+      setIsLoadingLogin(false);
     }
   };
 
@@ -321,7 +328,7 @@ const Login = () => {
         style={{ color: "#eee", textAlign: "center" }}
       >
         <Button block type="primary" htmlType="submit" size="large">
-          Registrarse
+        {isLoadingLogin? <Spin></Spin> :'Registrarse'}
         </Button>
         <div className="my-2">ó</div>
         <a

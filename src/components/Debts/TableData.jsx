@@ -15,6 +15,8 @@ import {
   CheckOutlined,
   UpCircleOutlined,
   DownCircleOutlined,
+  CiCircleFilled,
+  ExclamationCircleOutlined,
 } from "@ant-design/icons";
 import dayjs from "dayjs";
 import { Button, Input, Modal } from "antd";
@@ -25,6 +27,9 @@ function TableData({
   editFN,
   incrementDebt,
   decrementDebt,
+  changeStatusDebt,
+  setEditModal,
+  setItemSelected
 }) {
   const [incrementDebtModal, setIncrementDebtModal] = useState(false);
   const [decrementDebtModal, setDecrementDebtModal] = useState(false);
@@ -135,7 +140,7 @@ function TableData({
                   }
 
                   return (
-                    <tr key={movement.id}>
+                    <tr key={movement.id} style={{opacity: movement.isPaid ? 0.5 : 1}}>
                       {/* <td className="p-2 whitespace-nowrap">
                         
                         <div className="flex items-center">
@@ -230,24 +235,35 @@ function TableData({
                           </div>
 
                           <div className="text-center">
-                            <CheckOutlined
+                            {!movement.isPaid ?<CheckOutlined
                               title="Marcar como pagado"
-                              onClick={() => deleteFN(movement.debtId)}
+                              onClick={() => changeStatusDebt(movement.debtId,!movement.isPaid)}
                               className="text-green-500"
                               style={{ fontSize: 16 }}
+                            />:
+                            <ExclamationCircleOutlined
+                              title="Marcar como pendiente"
+                              onClick={() => changeStatusDebt(movement.debtId,!movement.isPaid)}
+                              className="text-red-500"
+                              style={{ fontSize: 16 }}
                             />
+                            
+                            }
                             <div
-                              className="text-center mt-1 text-sm xs:hidden text-wrap text-green-500"
+                              className="text-center mt-1 text-sm xs:hidden text-wrap "
                               style={{ fontSize: 10 }}
                             >
-                              Completar
+                              {!movement.isPaid ? "Marcar pagado": "Marcar pendiente"}
                             </div>
                           </div>
 
                           <div className="text-center">
                             <EditOutlined
                               title="Editar"
-                              onClick={() => editFN()}
+                              onClick={() => {
+                                setItemSelected(movement);
+                                setEditModal(true);
+                              }}
                               className="text-blue-400"
                               style={{ fontSize: 18 }}
                             />

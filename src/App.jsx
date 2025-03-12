@@ -21,6 +21,7 @@ import { useAuth } from './components/AuthProvider';
 import Egresos from './pages/Egresos';
 import Income from './pages/Income';
 import Debts from './pages/Debts';
+import Transactions from './pages/Transactions';
 
 function App() {
   const location = useLocation();
@@ -47,6 +48,11 @@ function App() {
         <Route exact path="/income" element={
           <ProtectedRoute>
           <Income/>
+        </ProtectedRoute>
+        } />
+        <Route exact path="/transactions" element={
+          <ProtectedRoute>
+          <Transactions/>
         </ProtectedRoute>
         } />
          <Route exact path="/debts" element={

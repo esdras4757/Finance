@@ -1,10 +1,11 @@
 import { Input, Modal } from 'antd';
-import React from 'react'
+import React, { useState } from 'react'
 import { AddCategoryModalProps } from '../../types/modalsTypes';
 
 const AddCategoryModal = ( props : AddCategoryModalProps) => {
     const {showAddCategoryModal, setShowAddCategoryModal, onOk , onCancel} = props;
     const [newCategory, setNewCategory] = React.useState<string>("");
+    const [loading, setLoading] = useState(false)
     const [error, setError] = React.useState<string>("");
   return (
     <Modal
@@ -12,6 +13,15 @@ const AddCategoryModal = ( props : AddCategoryModalProps) => {
         style={{ backgroundColor: "#111827" }}
         title="Agregar categoría"
         destroyOnClose
+        okButtonProps={{
+          disabled: loading,
+          loading: loading,
+          style: { backgroundColor: loading ? "white" : "#1890ff" },
+        }}
+        cancelButtonProps={{
+          disabled: loading,
+          style: { color: loading ? "gray" : "black" },
+        }}
         onCancel={() => {
             setNewCategory("");
             setShowAddCategoryModal(false);
@@ -22,7 +32,7 @@ const AddCategoryModal = ( props : AddCategoryModalProps) => {
                 setError("El nombre de la categoria es requerido");
                 return;
             }
-            onOk(newCategory);
+            onOk(newCategory,setLoading );
         }}
         // okButtonProps={{ disabled: !newCategory, style:{color:newCategory?'white':"gray"} }}
       >

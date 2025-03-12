@@ -17,7 +17,7 @@ import DashboardCard10 from "../partials/dashboard/DashboardCard10";
 import DashboardCard11 from "../partials/dashboard/DashboardCard11";
 import DashboardCard12 from "../partials/dashboard/DashboardCard12";
 import DashboardCard13 from "../partials/dashboard/DashboardCard13";
-import { Button, Form, Input, Modal, Select, Tabs, Tooltip } from "antd";
+import { Button, Form, Input, Modal, Select, Tooltip } from "antd";
 import { InfoCircleOutlined } from "@ant-design/icons";
 import { useAuth } from "../components/AuthProvider";
 import { useUser } from "../providers/UserProvider";
@@ -27,14 +27,14 @@ import AddCategoryModal from "../components/Modals/AddCategoryModal";
 import AddContactModal from "../components/Modals/AddContactModal";
 import ConditionalRendering from "../components/ConditionalRendering";
 import dayjs, { Dayjs } from "dayjs";
-import TableData from "../components/Debts/TableData";
-import DashboardCard03Debts from "../partials/dashboard/DashboardCard03Debts";
+import TableData from "../components/Transactions/TableData";
 import AddModal from "../components/AddModal";
 import EditModal from "../components/EditModal";
 
-function Debts() {
+function Transactions() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [addModal, setAddModal] = useState(false);
+  const [editModal, setEditModal] = useState(false);
   const [loaderDashboard, setLoaderDashboard] = useState(true);
   const [type, setType] = useState(1);
   const [selectedPerson, setSelectedPerson] = useState(null);
@@ -48,19 +48,11 @@ function Debts() {
   const [categoryCatalog, setCategoryCatalog] = useState([]);
   const [contactsCatalog, setContactsCatalog] = useState([]);
   const [dashboardData, setDashboardData] = useState([]);
-  const [debsToReceive, setDebsToReceive] = useState([]);
-  const [debsToPay, setDebsToPay] = useState(null);
-  const [graphToPay, setGraphToPay] = useState(null);
-  const [graphToReceive, setGraphToReceive] = useState(null);
+  const [itemSelected, setItemSelected] = useState(null);
   const [amount, setAmount] = useState(null);
+  const [graph, setGraph] = useState(null);
   const { user } = useUser();
   const [form] = useForm();
-  const [editModal, setEditModal] = useState(false);
-  const [itemSelected, setItemSelected] = useState(null);
-
-  const onChange = (key) => {
-    console.log(key);
-  };
 
   useEffect(() => {
     if (selectedPerson === "new") {
@@ -83,64 +75,20 @@ function Debts() {
     }
   }, [addModal]);
 
-  const getDebtsToRecibe = async () => {
+  const getDashboardData = async () => {
     console.log(user);
     if (!user || !user.id) {
       return;
     }
     try {
       setLoaderDashboard(true);
-      setDebsToReceive(null);
+      setDashboardData(null);
       const response = await axios.get(
-        `${import.meta.env.VITE_URL_BASE}/api/debts/byUserId/${
-          user.id
-        }/type/to-receive`
+        `${import.meta.env.VITE_URL_BASE}/api/transactions/${user.id}`
       );
       if (response) {
-        setDebsToReceive(response?.data?.result);
-        const totalDebt = response?.data?.DebtsGraph?.amounts.reduce(
-          (acc, curr) => acc + curr,
-          0
-        );
-        setGraphToReceive({
-          labels: response?.data?.DebtsGraph?.labels,
-          amounts: response?.data?.DebtsGraph?.amounts,
-          totalDebt,
-          name: "cobrar",
-        });
-      }
-    } catch (error) {
-      console.log(error);
-    } finally {
-      setLoaderDashboard(false);
-    }
-  };
-
-  const getDebtsTopay = async () => {
-    console.log(user);
-    if (!user || !user.id) {
-      return;
-    }
-    try {
-      setLoaderDashboard(true);
-      setDebsToPay(null);
-      const response = await axios.get(
-        `${import.meta.env.VITE_URL_BASE}/api/debts/byUserId/${
-          user.id
-        }/type/to-pay`
-      );
-      if (response) {
-        const totalDebt = response?.data?.DebtsGraph?.amounts.reduce(
-          (acc, curr) => acc + curr,
-          0
-        );
-        setDebsToPay(response?.data?.result);
-        setGraphToPay({
-          labels: response?.data?.DebtsGraph?.labels,
-          amounts: response?.data?.DebtsGraph?.amounts,
-          totalDebt,
-          name: "pagar",
-        });
+        setDashboardData(response?.data?.Transactions);
+        setGraph(response?.data);
       }
     } catch (error) {
       console.log(error);
@@ -155,55 +103,13 @@ function Debts() {
     } catch (error) {}
   };
 
-  const deleteFN = async (id) => {
+  const deleteFN = (id) => {
     try {
-      const response = await axios.delete(
-        `${import.meta.env.VITE_URL_BASE}/api/debts/${id}`
+      const response = axios.delete(
+        `${import.meta.env.VITE_URL_BASE}/api/income/${id}`
       );
-      if (response && response.status === 200) {
-        getDebtsTopay();
-        getDebtsToRecibe();
-      }
-    } catch (error) {}
-  };
-
-  const incrementDebt = async (id, amount) => {
-    try {
-      const response = await axios.patch(
-        `${import.meta.env.VITE_URL_BASE}/api/debts/increment/${id}`,
-        { amount }
-      );
-      if (response && response.status === 200) {
-        getDebtsTopay();
-        getDebtsToRecibe();
-      }
-    } catch (error) {}
-  };
-
-  const changeStatusDebt = async (id, isPaid) => {
-
-    try {
-      const response = await axios.patch(
-        `${import.meta.env.VITE_URL_BASE}/api/debts/${id}`,
-        { isPaid }
-      );
-      if (response && response.status === 200) {
-        getDebtsTopay();
-        getDebtsToRecibe();
-      }
-    } catch (error) {}
-  };
-
-
-  const decrementDebt = async (id, amount) => {
-    try {
-      const response = await axios.patch(
-        `${import.meta.env.VITE_URL_BASE}/api/debts/decrement/${id}`,
-        { amount }
-      );
-      if (response && response.status === 200) {
-        getDebtsTopay();
-        getDebtsToRecibe();
+      if (response) {
+        setDashboardData(dashboardData.filter((item) => item.incomeId !== id));
       }
     } catch (error) {}
   };
@@ -350,11 +256,6 @@ function Debts() {
     }
   };
 
-  const getAll= async () => {
-    await getDebtsTopay();
-    await getDebtsToRecibe();
-  }
-
   const GetCategoriesCatalog = async () => {
     try {
       if (!user || !user.id) {
@@ -390,8 +291,7 @@ function Debts() {
   };
 
   useEffect(() => {
-    getDebtsTopay();
-    getDebtsToRecibe();
+    getDashboardData();
   }, []);
 
   useEffect(() => {
@@ -400,73 +300,6 @@ function Debts() {
       GetContactsCatalog();
     }
   }, [addModal]);
-
-
-
-  const items = [
-    {
-      key: "1",
-      label: <span className="text-red-400 text-base">Deudas por pagar</span>,
-      children: (
-        <>
-            <>
-              <ConditionalRendering
-                isLoading={loaderDashboard}
-                data={debsToPay}
-              >
-                <ConditionalRendering
-                  isLoading={loaderDashboard}
-                  data={graphToPay}
-                >
-                  <div className="w-full mb-4">
-                    <DashboardCard03Debts data={graphToPay} />
-                  </div>
-                </ConditionalRendering>
-                {/* Right: Actions */}
-                <div className="grid grid-flow-col sm:auto-cols-max mb-4 sm:justify-end gap-2">
-                  {/* Filter button */}
-                  <FilterButton align="right" />
-                  {/* Datepicker built with React Day Picker */}
-                  <Datepicker align="right" />
-                </div>
-
-                <TableData setEditModal={setEditModal} setItemSelected={setItemSelected} data={debsToPay} deleteFN={deleteFN} incrementDebt={incrementDebt} decrementDebt={decrementDebt} changeStatusDebt={changeStatusDebt} />
-              </ConditionalRendering>
-            </>
-          
-        </>
-      ),
-    },
-    {
-      key: "2",
-      label: (
-        <span className="text-green-600 text-base">Deudas por cobrar</span>
-      ),
-      children: (
-        <>
-          {debsToReceive && debsToReceive.length > 0 && (
-            <>
-              <ConditionalRendering
-                isLoading={loaderDashboard}
-                data={debsToReceive}
-              >
-                <div className="w-full mb-4">
-                  <DashboardCard03Debts data={graphToReceive} />
-                </div>
-                <div className="grid grid-flow-col sm:auto-cols-max mb-4 sm:justify-end gap-2">
-                  {/* Filter button */}
-                  <FilterButton align="right" />
-                  {/* Datepicker built with React Day Picker */}
-                  <Datepicker align="right" />
-                </div>
-                <TableData setEditModal={setEditModal} setItemSelected={setItemSelected} data={debsToReceive} deleteFN={deleteFN} incrementDebt={incrementDebt} decrementDebt={decrementDebt} changeStatusDebt={changeStatusDebt}/>
-              </ConditionalRendering>
-            </>
-          )}
-        </>
-      ),
-    },
-  ];
 
   return (
     <div className="flex h-screen overflow-hidden" style={{ height: "100dvh" }}>
@@ -481,44 +314,50 @@ function Debts() {
           setSidebarOpen={setSidebarOpen}
           user={user}
         />
-
         <main className="grow">
-          <div className="px-4 sm:px-6 lg:px-8 py-6 sm:py-8 w-full max-w-9xl mx-auto">
+          <div className="px-4 sm:px-6 lg:px-8 py-5 w-full max-w-9xl mx-auto">
             {/* Dashboard actions */}
-            <div className="sm:flex sm:justify-between sm:items-center mb-0 sm:mb-2">
+            <div className="sm:flex sm:justify-between sm:items-center mb-5 sm:mb-6">
               {/* Left: Title */}
               <div className="mb-2 sm:mb-0 flex justify-between align-middle items-center flex-wrap w-full">
                 <h1 className="text-2xl md:text-3xl text-gray-800 dark:text-gray-100 font-bold md:mr-4">
-                  Deudas
+                  Transacciones
                 </h1>
-                <button
-                  onClick={() => setAddModal(true)}
-                  className="btn bg-gray-900 text-white-900 hover:bg-gray-800 dark:bg-blue-600 dark:text-white dark:hover:bg-blue-500 md:mr-4"
-                >
-                  <span className="w-full">+ Agregar</span>
-                </button>
               </div>
+
+              
             </div>
 
-            <Tabs
-              defaultActiveKey="1"
-              centered
-              style={{ color: "white" }}
-              indicator={{
-                width: "100%",
-                align: "center",
-              }}
-              items={items}
-              onChange={onChange}
-            />
+            <div>{/* <DashboardCard01 /> */}</div>
+
+            <ConditionalRendering
+              isLoading={loaderDashboard}
+              data={dashboardData}
+            >
+              <>
+              <div className="w-full flex flex-wrap gap-4 mb-5">
+                <div className="w-full">
+                  {/* <DashboardCard03 data={graph} /> */}
+                </div>
+              </div>
+              {/* Right: Actions */}
+              <div className="grid grid-flow-col sm:auto-cols-max  sm:justify-end gap-2 mb-4">
+                {/* Filter button */}
+                <FilterButton align="right" />
+                {/* Datepicker built with React Day Picker */}
+                <Datepicker align="right" />
+              </div>
+                <TableData data={dashboardData} setEditModal={setEditModal} deleteFN={deleteFN} setItemSelected={setItemSelected}/>
+              </>
+            </ConditionalRendering>
           </div>
         </main>
       </div>
 
-      <AddModal  addModal={addModal} setAddModal={setAddModal} processType={'debt'} onAdd={getAll}/>
-      <EditModal editModal={editModal}  setEditModal={setEditModal} itemSelected={itemSelected} getDashboardData={getAll}/>
+  <AddModal addModal={addModal} setAddModal={setAddModal} processType={'Ingress'} onAdd={getDashboardData} setDashboardData={setDashboardData}/>  
+  <EditModal editModal={editModal}  setEditModal={setEditModal} itemSelected={itemSelected} setDashboardData={setDashboardData} getDashboardData={getDashboardData}/>
     </div>
   );
 }
 
-export default Debts;
+export default Transactions;

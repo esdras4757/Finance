@@ -2,13 +2,9 @@ import React, { useState, useEffect, useRef } from "react";
 import { Navigate, NavLink, useLocation, useNavigate } from "react-router-dom";
 
 import SidebarLinkGroup from "./SidebarLinkGroup";
-import { AuditOutlined } from "@ant-design/icons";
+import { AuditOutlined, FallOutlined, HistoryOutlined, RiseOutlined, SwapOutlined } from "@ant-design/icons";
 
-function Sidebar({
-  sidebarOpen,
-  setSidebarOpen,
-  variant = 'default',
-}) {
+function Sidebar({ sidebarOpen, setSidebarOpen, variant = "default" }) {
   const location = useLocation();
   const { pathname } = location;
 
@@ -16,13 +12,20 @@ function Sidebar({
   const sidebar = useRef(null);
 
   const storedSidebarExpanded = localStorage.getItem("sidebar-expanded");
-  const [sidebarExpanded, setSidebarExpanded] = useState(storedSidebarExpanded === null ? false : storedSidebarExpanded === "true");
+  const [sidebarExpanded, setSidebarExpanded] = useState(
+    storedSidebarExpanded === null ? false : storedSidebarExpanded === "true"
+  );
   const navigate = useNavigate();
   // close on click outside
   useEffect(() => {
     const clickHandler = ({ target }) => {
       if (!sidebar.current || !trigger.current) return;
-      if (!sidebarOpen || sidebar.current.contains(target) || trigger.current.contains(target)) return;
+      if (
+        !sidebarOpen ||
+        sidebar.current.contains(target) ||
+        trigger.current.contains(target)
+      )
+        return;
       setSidebarOpen(false);
     };
     document.addEventListener("click", clickHandler);
@@ -62,7 +65,13 @@ function Sidebar({
       <div
         id="sidebar"
         ref={sidebar}
-        className={`flex lg:!flex flex-col absolute z-40 left-0 top-0 lg:static lg:left-auto lg:top-auto lg:translate-x-0 h-[100dvh] overflow-y-scroll lg:overflow-y-auto no-scrollbar w-64 lg:w-20 lg:sidebar-expanded:!w-64 2xl:!w-64 shrink-0 bg-white dark:bg-gray-800 p-4 transition-all duration-200 ease-in-out ${sidebarOpen ? "translate-x-0" : "-translate-x-64"} ${variant === 'v2' ? 'border-r border-gray-200 dark:border-gray-700/60' : 'rounded-r-2xl shadow-sm'}`}
+        className={`flex lg:!flex flex-col absolute z-40 left-0 top-0 lg:static lg:left-auto lg:top-auto lg:translate-x-0 h-[100dvh] overflow-y-scroll lg:overflow-y-auto no-scrollbar w-64 lg:w-20 lg:sidebar-expanded:!w-64 2xl:!w-64 shrink-0 bg-white dark:bg-gray-800 p-4 transition-all duration-200 ease-in-out ${
+          sidebarOpen ? "translate-x-0" : "-translate-x-64"
+        } ${
+          variant === "v2"
+            ? "border-r border-gray-200 dark:border-gray-700/60"
+            : "rounded-r-2xl shadow-sm"
+        }`}
       >
         {/* Sidebar header */}
         <div className="flex justify-between mb-10 pr-3 sm:px-2">
@@ -75,15 +84,29 @@ function Sidebar({
             aria-expanded={sidebarOpen}
           >
             <span className="sr-only">Close sidebar</span>
-            <svg className="w-6 h-6 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+            <svg
+              className="w-6 h-6 fill-current"
+              viewBox="0 0 24 24"
+              xmlns="http://www.w3.org/2000/svg"
+            >
               <path d="M10.7 18.7l1.4-1.4L7.8 13H20v-2H7.8l4.3-4.3-1.4-1.4L4 12z" />
             </svg>
           </button>
           {/* Logo */}
-          <NavLink end to="/" className="block flex justify-center items-center">
-            <svg className="fill-violet-500" xmlns="http://www.w3.org/2000/svg" width={32} height={32}>
+          <NavLink
+            end
+            to="/"
+            className="block flex justify-center items-center"
+          >
+            <svg
+              className="fill-violet-500"
+              xmlns="http://www.w3.org/2000/svg"
+              width={32}
+              height={32}
+            >
               <path d="M31.956 14.8C31.372 6.92 25.08.628 17.2.044V5.76a9.04 9.04 0 0 0 9.04 9.04h5.716ZM14.8 26.24v5.716C6.92 31.372.63 25.08.044 17.2H5.76a9.04 9.04 0 0 1 9.04 9.04Zm11.44-9.04h5.716c-.584 7.88-6.876 14.172-14.756 14.756V26.24a9.04 9.04 0 0 1 9.04-9.04ZM.044 14.8C.63 6.92 6.92.628 14.8.044V5.76a9.04 9.04 0 0 1-9.04 9.04H.044Z" />
-            </svg><span className="ms-2 text-xl text-orange-300">Finance</span>
+            </svg>
+            <span className="ms-2 text-xl text-orange-300">Finance</span>
           </NavLink>
         </div>
 
@@ -92,59 +115,247 @@ function Sidebar({
           {/* Pages group */}
           <div>
             <h3 className="text-xs uppercase text-gray-400 dark:text-gray-500 font-semibold pl-3">
-              <span className="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6" aria-hidden="true">
+              <span
+                className="hidden lg:block lg:sidebar-expanded:hidden 2xl:hidden text-center w-6"
+                aria-hidden="true"
+              >
                 •••
               </span>
-              <span className="lg:hidden lg:sidebar-expanded:block 2xl:block">Pages</span>
+              <span className="lg:hidden lg:sidebar-expanded:block 2xl:block">
+                Pages
+              </span>
             </h3>
             <ul className="mt-3">
               {/* Dashboard */}
               <div onClick={() => navigate("/dashboard")}>
-              <SidebarLinkGroup  activecondition={pathname === "/" || pathname.includes("dashboard")}>
-                {(handleClick, open) => {
-                  return (
+                <SidebarLinkGroup
+                  activecondition={
+                    pathname === "/" || pathname.includes("dashboard")
+                  }
+                >
+                  {(handleClick, open) => {
+                    return (
                       <a
                         href="/dashboard"
                         className={`block text-gray-800 dark:text-gray-100 truncate transition duration-150 ${
-                          pathname === "/" || pathname.includes("dashboard") ? "" : "hover:text-gray-900 dark:hover:text-white"
+                          pathname === "/" || pathname.includes("dashboard")
+                            ? ""
+                            : "hover:text-gray-900 dark:hover:text-white"
                         }`}
                         onClick={(e) => {
                           e.preventDefault();
-                          handleClick(
-                            () => {
-                              navigate("/dashboard");
-                            }
-                          );
+                          handleClick(() => {
+                            navigate("/dashboard");
+                          });
                           setSidebarExpanded(true);
                         }}
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center">
-                            <svg className={`shrink-0 fill-current ${pathname === "/" || pathname.includes("dashboard") ? 'text-violet-500' : 'text-gray-400 dark:text-gray-500'}`} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                            <svg
+                              className={`shrink-0 fill-current ${
+                                pathname === "/" ||
+                                pathname.includes("dashboard")
+                                  ? "text-violet-500"
+                                  : "text-gray-400 dark:text-gray-500"
+                              }`}
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              viewBox="0 0 16 16"
+                            >
                               <path d="M5.936.278A7.983 7.983 0 0 1 8 0a8 8 0 1 1-8 8c0-.722.104-1.413.278-2.064a1 1 0 1 1 1.932.516A5.99 5.99 0 0 0 2 8a6 6 0 1 0 6-6c-.53 0-1.045.076-1.548.21A1 1 0 1 1 5.936.278Z" />
                               <path d="M6.068 7.482A2.003 2.003 0 0 0 8 10a2 2 0 1 0-.518-3.932L3.707 2.293a1 1 0 0 0-1.414 1.414l3.775 3.775Z" />
-                            </svg>                            
+                            </svg>
                             <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
                               Dashboard
                             </span>
                           </div>
-                        
                         </div>
                       </a>
-                  
-                  );
-                }}
-              </SidebarLinkGroup>
+                    );
+                  }}
+                </SidebarLinkGroup>
               </div>
+              <div onClick={() => navigate("/income")}>
+                <SidebarLinkGroup activecondition={pathname.includes("income")}>
+                  {(handleClick, open) => {
+                    return (
+                      <a
+                        href="/income"
+                        className={`block text-gray-800 dark:text-gray-100 truncate transition duration-150 ${
+                          pathname === "/" || pathname.includes("income")
+                            ? ""
+                            : "hover:text-gray-900 dark:hover:text-white"
+                        }`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleClick(() => {
+                            navigate("/income");
+                          });
+                          // setSidebarExpanded(true);
+                        }}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                          <RiseOutlined
+                          className={`shrink-0 fill-current ${
+                            pathname === "/" ||
+                            pathname.includes("income")
+                              ? "text-violet-500"
+                              : "text-gray-400 dark:text-gray-500"
+                          }`}
+                          style={{ fontSize: 20 }}
+                        />
+                            <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                              Ingresos
+                            </span>
+                          </div>
+                        </div>
+                      </a>
+                    );
+                  }}
+                </SidebarLinkGroup>
+              </div>
+              <div onClick={() => navigate("/egress")}>
+                <SidebarLinkGroup activecondition={pathname.includes("egress")}>
+                  {(handleClick, open) => {
+                    return (
+                      <a
+                        href="/egress"
+                        className={`block text-gray-800 dark:text-gray-100 truncate transition duration-150 ${
+                          pathname === "/" || pathname.includes("egress")
+                            ? ""
+                            : "hover:text-gray-900 dark:hover:text-white"
+                        }`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleClick(() => {
+                            navigate("/egress");
+                          });
+                          // setSidebarExpanded(true);
+                        }}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                          <FallOutlined
+                          className={`shrink-0 fill-current ${
+                            pathname === "/" ||
+                            pathname.includes("egress")
+                              ? "text-violet-500"
+                              : "text-gray-400 dark:text-gray-500"
+                          }`}
+                          style={{ fontSize: 20 }}
+                        />
+                            <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                              Egresos
+                            </span>
+                          </div>
+                        </div>
+                      </a>
+                    );
+                  }}
+                </SidebarLinkGroup>
+              </div>
+              <div onClick={() => navigate("/debts")}>
+                <SidebarLinkGroup activecondition={pathname.includes("debts")}>
+                  {(handleClick, open) => {
+                    return (
+                      <a
+                        href="/debts"
+                        className={`block text-gray-800 dark:text-gray-100 truncate transition duration-150 ${
+                          pathname === "/" || pathname.includes("debts")
+                            ? ""
+                            : "hover:text-gray-900 dark:hover:text-white"
+                        }`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleClick(() => {
+                            navigate("/debts");
+                          });
+                          // setSidebarExpanded(true);
+                        }}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                          <SwapOutlined
+                          className={`shrink-0 fill-current ${
+                            pathname === "/" ||
+                            pathname.includes("debts")
+                              ? "text-violet-500"
+                              : "text-gray-400 dark:text-gray-500"
+                          }`}
+                          style={{ fontSize: 20 }}
+                        />
+                            <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                              Deudas
+                            </span>
+                          </div>
+                        </div>
+                      </a>
+                    );
+                  }}
+                </SidebarLinkGroup>
+              </div>
+              <div onClick={() => navigate("/transactions")}>
+                <SidebarLinkGroup activecondition={pathname.includes("transactions")}>
+                  {(handleClick, open) => {
+                    return (
+                      <a
+                        href="/transactions"
+                        className={`block text-gray-800 dark:text-gray-100 truncate transition duration-150 ${
+                          pathname === "/" || pathname.includes("transactions")
+                            ? ""
+                            : "hover:text-gray-900 dark:hover:text-white"
+                        }`}
+                        onClick={(e) => {
+                          e.preventDefault();
+                          handleClick(() => {
+                            navigate("/transactions");
+                          });
+                          // setSidebarExpanded(true);
+                        }}
+                      >
+                        <div className="flex items-center justify-between">
+                          <div className="flex items-center">
+                          <HistoryOutlined 
+                          className={`shrink-0 fill-current ${
+                            pathname === "/" ||
+                            pathname.includes("transactions")
+                              ? "text-violet-500"
+                              : "text-gray-400 dark:text-gray-500"
+                          }`}
+                          />
+                            <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
+                              Transacciones
+                            </span>
+                          </div>
+                        </div>
+                      </a>
+                    );
+                  }}
+                </SidebarLinkGroup>
+              </div>
+
               {/* Finance */}
-              <SidebarLinkGroup activecondition={pathname.includes("finance") || pathname.includes("income") || pathname.includes("egress") || pathname.includes("debts")}>
+              {/* <SidebarLinkGroup
+                activecondition={
+                  pathname.includes("finance") ||
+                  pathname.includes("income") ||
+                  pathname.includes("egress") ||
+                  pathname.includes("debts") ||
+                  pathname.includes("transactions")
+                }
+              >
                 {(handleClick, open) => {
                   return (
                     <React.Fragment>
                       <a
                         href="#0"
                         className={`block text-gray-800 dark:text-gray-100 truncate transition duration-150 ${
-                          pathname.includes("finance") ? "" : "hover:text-gray-900 dark:hover:text-white"
+                          pathname.includes("finance")
+                            ? ""
+                            : "hover:text-gray-900 dark:hover:text-white"
                         }`}
                         onClick={(e) => {
                           e.preventDefault();
@@ -154,7 +365,17 @@ function Sidebar({
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center">
-                            <svg className={`shrink-0 fill-current ${pathname.includes('finance') ? 'text-violet-500' : 'text-gray-400 dark:text-gray-500'}`} xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 16 16">
+                            <svg
+                              className={`shrink-0 fill-current ${
+                                pathname.includes("finance")
+                                  ? "text-violet-500"
+                                  : "text-gray-400 dark:text-gray-500"
+                              }`}
+                              xmlns="http://www.w3.org/2000/svg"
+                              width="16"
+                              height="16"
+                              viewBox="0 0 16 16"
+                            >
                               <path d="M6 0a6 6 0 0 0-6 6c0 1.077.304 2.062.78 2.912a1 1 0 1 0 1.745-.976A3.945 3.945 0 0 1 2 6a4 4 0 0 1 4-4c.693 0 1.344.194 1.936.525A1 1 0 1 0 8.912.779 5.944 5.944 0 0 0 6 0Z" />
                               <path d="M10 4a6 6 0 1 0 0 12 6 6 0 0 0 0-12Zm-4 6a4 4 0 1 1 8 0 4 4 0 0 1-8 0Z" />
                             </svg>
@@ -162,9 +383,13 @@ function Sidebar({
                               Finanzas
                             </span>
                           </div>
-                          {/* Icon */}
                           <div className="flex shrink-0 ml-2">
-                            <svg className={`w-3 h-3 shrink-0 ml-1 fill-current text-gray-400 dark:text-gray-500 ${open && "rotate-180"}`} viewBox="0 0 12 12">
+                            <svg
+                              className={`w-3 h-3 shrink-0 ml-1 fill-current text-gray-400 dark:text-gray-500 ${
+                                open && "rotate-180"
+                              }`}
+                              viewBox="0 0 12 12"
+                            >
                               <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
                             </svg>
                           </div>
@@ -177,7 +402,10 @@ function Sidebar({
                               end
                               to="/income"
                               className={({ isActive }) =>
-                                "block transition duration-150 truncate " + (isActive ? "text-violet-500" : "text-gray-500/90 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200")
+                                "block transition duration-150 truncate " +
+                                (isActive
+                                  ? "text-violet-500"
+                                  : "text-gray-500/90 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200")
                               }
                             >
                               <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
@@ -190,7 +418,10 @@ function Sidebar({
                               end
                               to="/egress"
                               className={({ isActive }) =>
-                                "block transition duration-150 truncate " + (isActive ? "text-violet-500" : "text-gray-500/90 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200")
+                                "block transition duration-150 truncate " +
+                                (isActive
+                                  ? "text-violet-500"
+                                  : "text-gray-500/90 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200")
                               }
                             >
                               <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
@@ -203,7 +434,10 @@ function Sidebar({
                               end
                               to="/debts"
                               className={({ isActive }) =>
-                                "block transition duration-150 truncate " + (isActive ? "text-violet-500" : "text-gray-500/90 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200")
+                                "block transition duration-150 truncate " +
+                                (isActive
+                                  ? "text-violet-500"
+                                  : "text-gray-500/90 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200")
                               }
                             >
                               <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
@@ -214,9 +448,12 @@ function Sidebar({
                           <li className="mb-1 last:mb-0">
                             <NavLink
                               end
-                              to="https://cruip.com/mosaic/"
+                              to="/transactions"
                               className={({ isActive }) =>
-                                "block transition duration-150 truncate " + (isActive ? "text-violet-500" : "text-gray-500/90 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200")
+                                "block transition duration-150 truncate " +
+                                (isActive
+                                  ? "text-violet-500"
+                                  : "text-gray-500/90 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200")
                               }
                             >
                               <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
@@ -229,98 +466,7 @@ function Sidebar({
                     </React.Fragment>
                   );
                 }}
-              </SidebarLinkGroup>
-
-              <SidebarLinkGroup activecondition={pathname.includes("finance")}>
-                {(handleClick, open) => {
-                  return (
-                    <React.Fragment>
-                      <a
-                        href="#0"
-                        className={`block text-gray-800 dark:text-gray-100 truncate transition duration-150 ${
-                          pathname.includes("finance") ? "" : "hover:text-gray-900 dark:hover:text-white"
-                        }`}
-                        onClick={(e) => {
-                          e.preventDefault();
-                          handleClick();
-                          setSidebarExpanded(true);
-                        }}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center">
-                            <AuditOutlined className=" text-gray-400" />
-                            <span className="text-sm font-medium ml-4 lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                              Seguimiento de habitos
-                            </span>
-                          </div>
-                          {/* Icon */}
-                          <div className="flex shrink-0 ml-2">
-                            <svg className={`w-3 h-3 shrink-0 ml-1 fill-current text-gray-400 dark:text-gray-500 ${open && "rotate-180"}`} viewBox="0 0 12 12">
-                              <path d="M5.9 11.4L.5 6l1.4-1.4 4 4 4-4L11.3 6z" />
-                            </svg>
-                          </div>
-                        </div>
-                      </a>
-                      <div className="lg:hidden lg:sidebar-expanded:block 2xl:block">
-                        <ul className={`pl-8 mt-1 ${!open && "hidden"}`}>
-                          <li className="mb-1 last:mb-0">
-                            <NavLink
-                              end
-                              to="/ingress"
-                              className={({ isActive }) =>
-                                "block transition duration-150 truncate " + (isActive ? "text-violet-500" : "text-gray-500/90 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200")
-                              }
-                            >
-                              <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                Ingresos
-                              </span>
-                            </NavLink>
-                          </li>
-                          <li className="mb-1 last:mb-0">
-                            <NavLink
-                              end
-                              to="https://cruip.com/mosaic/"
-                              className={({ isActive }) =>
-                                "block transition duration-150 truncate " + (isActive ? "text-violet-500" : "text-gray-500/90 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200")
-                              }
-                            >
-                              <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                Egresos
-                              </span>
-                            </NavLink>
-                          </li>
-                          <li className="mb-1 last:mb-0">
-                            <NavLink
-                              end
-                              to="https://cruip.com/mosaic/"
-                              className={({ isActive }) =>
-                                "block transition duration-150 truncate " + (isActive ? "text-violet-500" : "text-gray-500/90 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200")
-                              }
-                            >
-                              <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                Deudas
-                              </span>
-                            </NavLink>
-                          </li>
-                          <li className="mb-1 last:mb-0">
-                            <NavLink
-                              end
-                              to="https://cruip.com/mosaic/"
-                              className={({ isActive }) =>
-                                "block transition duration-150 truncate " + (isActive ? "text-violet-500" : "text-gray-500/90 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200")
-                              }
-                            >
-                              <span className="text-sm font-medium lg:opacity-0 lg:sidebar-expanded:opacity-100 2xl:opacity-100 duration-200">
-                                Transacciones
-                              </span>
-                            </NavLink>
-                          </li>
-                        </ul>
-                      </div>
-                    </React.Fragment>
-                  );
-                }}
-              </SidebarLinkGroup>
+              </SidebarLinkGroup> */}
             </ul>
           </div>
           {/* More group */}

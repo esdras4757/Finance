@@ -28,15 +28,22 @@ import AddContactModal from "../components/Modals/AddContactModal";
 import ConditionalRendering from "../components/ConditionalRendering";
 import dayjs, { Dayjs } from "dayjs";
 import AddModal from "../components/AddModal";
+import { useNavigate } from "react-router-dom";
 
 function Dashboard() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [addModal, setAddModal] = useState(false);
   const [loaderDashboard, setLoaderDashboard] = useState(true);
   const [type, setType] = useState(1);
+  const navigate = useNavigate();
   const [selectedPerson, setSelectedPerson] = useState(null);;
 
-
+  useEffect(() => {
+    if (!sessionStorage.getItem("token")) {
+      navigate("/login");
+    }
+  }, [])
+  
 
   const [dashboardData, setDashboardData] = useState([]);
 

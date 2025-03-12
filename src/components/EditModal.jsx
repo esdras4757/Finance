@@ -8,17 +8,16 @@ import dayjs, { Dayjs } from "dayjs";
 import { useUser } from "../providers/UserProvider";
 import axios from "axios";
 
-const AddModal = (props) => {
-  const { addModal, setAddModal, processType = null, setDashboardData, onAdd } = props;
-  let initialType = 1;
-  let title = "Agregar ingreso";
-  if (processType === "expenses") {
-    initialType = 2;
-    title = "Agregar egreso";
-  } else if (processType === "debt") {
-    initialType = 3;
-    title = "Agregar deuda";
-  }
+const EditModal = (props) => {
+  const {
+    editModal,
+    setEditModal,
+    processType = null,
+    setDashboardData,
+    onAdd,
+    itemSelected,
+    getDashboardData
+  } = props;
 
   const [categoryCatalog, setCategoryCatalog] = useState([]);
   const [contactsCatalog, setContactsCatalog] = useState([]);
@@ -29,29 +28,39 @@ const AddModal = (props) => {
   const [category, setCategory] = useState(null);
   const [newCategory, setNewCategory] = useState(null);
   const [addLogin, setAddLogin] = useState(false);
-  const [type, setType] = useState(initialType);
+  const [type, setType] = useState(0);
   const [amount, setAmount] = useState(null);
   const [form] = useForm();
   const { user } = useUser();
 
   useEffect(() => {
-    if (addModal === true) {
-      setAmount(null);
-      //   setType(1);
-      setCategory(null);
-      setSelectedPerson(null);
-      form.resetFields();
-      form.setFields[
-        ({ name: "category", value: null },
-        { name: "selectedPerson", value: null })
-      ];
-      form.setFields;
+    if (itemSelected) {
+      console.log(itemSelected);
+      form.setFieldsValue({
+        amount: Math.abs(+itemSelected.amount),
+        creation_date: dayjs(itemSelected?.creation_date).format("YYYY-MM-DD"),
+        category: itemSelected?.category?.name,
+        concept: itemSelected?.concept,
+        selectedPerson: itemSelected?.contact?.name,
+        debtType: itemSelected?.type,
+      });
+      setDebtType(itemSelected.type);
+      setAmount( Math.abs(+itemSelected?.amount));
+      setSelectedPerson(itemSelected?.contact?.name);
+      setCategory(itemSelected?.category?.name);
+      if (itemSelected?.expenseId) {
+        setType(2);
+        console.log("Egreso");
+        form.setFields([{ name: "type", value: 2 }]);
+      } else if (itemSelected.incomeId) {
+        setType(1);
+        form.setFields([{ name: "type", value: 1 }]);
+      } else if (itemSelected.debtId) {
+        setType(3);
+        form.setFields([{ name: "type", value: 3 }]);
+      }
     }
-  }, [addModal]);
-
-  useEffect(() => {
-    form.setFields([{ name: "type", value: type }]);
-  }, [type]);
+  }, [itemSelected, editModal]);
 
   useEffect(() => {
     if (selectedPerson === "new") {
@@ -60,71 +69,60 @@ const AddModal = (props) => {
   }, [selectedPerson]);
 
   const handleExpenses = async (values) => {
-    if (values.category) {
-      values.categoryId = categoryCatalog.find(
-        (category) => category.name === values.category
-      ).categoryId;
-    }
-    delete values.category;
     delete values.type;
-    values.amount = parseFloat(values.amount.replace(/,/g, ""));
+    console.log(values);
+    if (typeof values.amount === "string") {
+      values.amount = parseFloat(values.amount.replace(/,/g, ""));
+    }
+    // values.amount = parseFloat(values.amount.replace(/,/g, ""));
     try {
-      if (user && user.id) {
-        values.userId = user.id;
-      }
-      const response = await axios.post(
-        `${import.meta.env.VITE_URL_BASE}/api/expenses`,
+      const response = await axios.patch(
+        `${import.meta.env.VITE_URL_BASE}/api/expenses/${
+          itemSelected.expenseId
+        }`,
         values
       );
       if (response) {
         console.log("Registro guardado correctamente");
-        setAddModal(false);
-        form.setFields([{ name: "category", value: null }]);
-        setDashboardData(prev=>{
-            return [response.data,...prev]
-        })
-        
+        setEditModal(false);
+        getDashboardData();
       }
     } catch (error) {
-        console.log(error);
+      console.log(error);
     } finally {
-        setAddLogin(false);
+      setAddLogin(false);
     }
   };
 
   const handleIngress = async (values) => {
-    if (values.category) {
-      values.categoryId = categoryCatalog.find(
-        (category) => category.name === values.category
-      ).categoryId;
-    }
-    delete values.category;
     delete values.type;
-    values.amount = parseFloat(values.amount.replace(/,/g, ""));
+    delete values.userId;
+    console.log(values);
+    if (typeof values.amount === "string") {
+      values.amount = parseFloat(values.amount.replace(/,/g, ""));
+    }
     try {
-      if (user && user.id) {
-        values.userId = user.id;
-      }
-      const response = await axios.post(
-        `${import.meta.env.VITE_URL_BASE}/api/income`,
+      const response = await axios.patch(
+        `${import.meta.env.VITE_URL_BASE}/api/income/${itemSelected.incomeId}`,
         values
       );
       if (response) {
         console.log("Registro guardado correctamente");
-        setAddModal(false);
+        setEditModal(false);
         form.resetFields();
-        setDashboardData(prev=>{
-            return [response.data,...prev]
-        })
+        setDashboardData((prev) => {
+          return [response.data, ...prev];
+        });
       }
     } catch (error) {
-        console.log(error);
-    }finally {
+      console.log(error);
+    } finally {
       setAddLogin(false);
-  }
+    }
   };
 
   const handleDebt = async (values) => {
+    delete values.userId;
     if (values.category) {
       values.categoryId = categoryCatalog.find(
         (category) => category.name === values.category
@@ -141,23 +139,20 @@ const AddModal = (props) => {
     delete values.debtType;
     values.amount = parseFloat(values.amount.replace(/,/g, ""));
     try {
-      console.log(values);
-      if (user && user.id) {
-        values.userId = user.id;
-      }
-      const response = await axios.post(
-        `${import.meta.env.VITE_URL_BASE}/api/debts`,
+      const response = await axios.patch(
+        `${import.meta.env.VITE_URL_BASE}/api/debts/${itemSelected.debtId}`,
         values
       );
       if (response) {
         console.log("Registro guardado correctamente");
-        setAddModal(false);
+        setEditModal(false);
         form.resetFields();
         onAdd();
       }
-    } catch (error) {}finally {
+    } catch (error) {
+    } finally {
       setAddLogin(false);
-  }
+    }
   };
 
   const handleChange = (e) => {
@@ -181,7 +176,7 @@ const AddModal = (props) => {
     console.log(formattedValue);
   };
 
-  const AddCategory = async (name,setLoading) => {
+  const AddCategory = async (name, setLoading) => {
     setLoading(true);
     try {
       if (!user || !user.id || !name) {
@@ -208,7 +203,7 @@ const AddModal = (props) => {
     } catch (error) {
       console.log(error);
     } finally {
-        setLoading(false);
+      setLoading(false);
     }
   };
 
@@ -233,9 +228,8 @@ const AddModal = (props) => {
       }
     } catch (error) {
       console.log(error);
-    }
-    finally {
-        setLoading(false);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -274,20 +268,20 @@ const AddModal = (props) => {
   };
 
   useEffect(() => {
-    if (addModal) {
+    if (editModal) {
       GetCategoriesCatalog();
       GetContactsCatalog();
     }
-  }, [addModal]);
+  }, [editModal]);
 
   return (
     <>
       <AddContactModal
         showAddContactModal={showAddPersonModal}
         setShowAddContactModal={setShowAddPersonModal}
-        onOk={(contact,setLoading) => {
+        onOk={(contact, setLoading) => {
           console.log(contact, "contact");
-          AddContact(contact,setLoading);
+          AddContact(contact, setLoading);
         }}
         onCancel={() => {
           console.log("onCancel");
@@ -302,9 +296,9 @@ const AddModal = (props) => {
         showAddCategoryModal={showAddCategoryModal}
         setShowAddCategoryModal={setShowAddCategoryModal}
         okB
-        onOk={(newCategory,setLoading) => {
+        onOk={(newCategory, setLoading) => {
           console.log(newCategory, "newCategory");
-          AddCategory(newCategory,setLoading);
+          AddCategory(newCategory, setLoading);
         }}
         onCancel={() => {
           console.log("onCancel");
@@ -316,12 +310,12 @@ const AddModal = (props) => {
       />
 
       <Modal
-        open={addModal}
-        title={title}
+        open={editModal}
+        title={"Editar Registro"}
         destroyOnClose
         footer={null}
         onCancel={() => {
-          setAddModal(false);
+          setEditModal(false);
           //   setType(1);
           setCategory(null);
           setAmount(null);
@@ -353,27 +347,26 @@ const AddModal = (props) => {
           {/* Tipo de Registro */}
 
           {processType === null && (
-              <Form.Item
-                label="Tipo de Registro*"
-                name="type"
-                initialValue={1}
-                rules={[
-                  { required: true, message: "Selecciona un tipo de registro" },
-                ]}
+            <Form.Item
+              label="Tipo de Registro*"
+              name="type"
+              rules={[
+                { required: true, message: "Selecciona un tipo de registro" },
+              ]}
+            >
+              <Select
+                placeholder="Selecciona un tipo de registro"
+                defaultValue={type}
+                onChange={(value) => setType(value)}
               >
-                <Select
-                  placeholder="Selecciona un tipo de registro"
-                  onChange={(value) => setType(value)}
-                >
-                  <Select.Option value={1}>Ingreso</Select.Option>
-                  <Select.Option value={2}>Egreso</Select.Option>
-                  <Select.Option value={3}>Deuda</Select.Option>
-                </Select>
-              </Form.Item>
-            )}
+                <Select.Option value={1}>Ingreso</Select.Option>
+                <Select.Option value={2}>Egreso</Select.Option>
+                <Select.Option value={3}>Deuda</Select.Option>
+              </Select>
+            </Form.Item>
+          )}
 
           <div className="flex justify-between items-center gap-3">
-            
             {/* Monto */}
             <Form.Item
               label="Monto*"
@@ -407,7 +400,7 @@ const AddModal = (props) => {
                   console.log(e.target.value);
                 }}
                 style={{
-                //   height: "34px",
+                  //   height: "34px",
                   borderBottom: "1px solid #ccc",
                   fontSize: "13px",
                 }}
@@ -449,6 +442,7 @@ const AddModal = (props) => {
                 <Select
                   showSearch
                   placeholder="Selecciona una persona o agrega nueva"
+                  allowClear
                   value={selectedPerson}
                   onChange={(value) => {
                     if (value === "nuevo") {
@@ -544,15 +538,13 @@ const AddModal = (props) => {
             />
           </Form.Item>
 
-          
-
           {/* Botón de enviar */}
           <Form.Item className="flex buttonsFooter justify-end">
             <Button
               type="default"
               className="mr-4 mb-0"
               onClick={() => {
-                setAddModal(false);
+                setEditModal(false);
               }}
             >
               Cancelar
@@ -567,4 +559,4 @@ const AddModal = (props) => {
   );
 };
 
-export default AddModal;
+export default EditModal;
