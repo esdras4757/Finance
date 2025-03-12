@@ -444,7 +444,6 @@ function Debts() {
       ),
       children: (
         <>
-          {debsToReceive && debsToReceive.length > 0 && (
             <>
               <ConditionalRendering
                 isLoading={loaderDashboard}
@@ -462,7 +461,6 @@ function Debts() {
                 <TableData setEditModal={setEditModal} setItemSelected={setItemSelected} data={debsToReceive} deleteFN={deleteFN} incrementDebt={incrementDebt} decrementDebt={decrementDebt} changeStatusDebt={changeStatusDebt}/>
               </ConditionalRendering>
             </>
-          )}
         </>
       ),
     },
