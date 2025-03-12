@@ -140,6 +140,7 @@ const AddModal = (props) => {
     delete values.category;
     delete values.debtType;
     values.amount = parseFloat(values.amount.replace(/,/g, ""));
+    values.isPaid=false;
     try {
       console.log(values);
       if (user && user.id) {
@@ -388,7 +389,7 @@ const AddModal = (props) => {
                 value={amount}
                 onChange={handleChange}
                 style={{
-                  width: "210px",
+                  width: "130px",
                   fontSize: "14px",
                 }}
               />

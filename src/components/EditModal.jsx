@@ -381,7 +381,7 @@ const EditModal = (props) => {
                 value={amount}
                 onChange={handleChange}
                 style={{
-                  width: "210px",
+                  width: "130px",
                   fontSize: "14px",
                 }}
               />
